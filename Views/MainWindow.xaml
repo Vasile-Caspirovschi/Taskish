@@ -1,0 +1,557 @@
+﻿<Window x:Class="Taskish.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Taskish" 
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
+        xmlns:controls="clr-namespace:System.Windows.Controls;assembly=DotNetProjects.Input.Toolkit"
+        mc:Ignorable="d"
+        Name="mainWindow"
+        Title="Taskish" Icon="/Assets/Images/logo.png" MinWidth="700" Width="850" Height="500" MinHeight="500" WindowStyle="None" WindowStartupLocation="CenterScreen" AllowsTransparency="True" Background="{x:Null}" Loaded="mainWindow_Loaded" ResizeMode="CanResizeWithGrip">
+    <Window.Resources>
+        
+    </Window.Resources>
+    <Grid Name="mainGrid">
+        
+        <Border Name="borderMask" CornerRadius="7" Background="White"/>
+        <Border Name="borderMain">
+            <Border.OpacityMask>
+                <VisualBrush Visual="{Binding ElementName=borderMask}"/>
+            </Border.OpacityMask>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+
+                <!--HEADER-->
+                <Grid Background="#0e213d">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="36"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid x:Name="grdHeader" Grid.Row="0" Grid.ColumnSpan="3"  PreviewMouseLeftButtonDown="Grid_PreviewMouseLeftButtonDown" VerticalAlignment="Top" Height="30" Background="Transparent">
+                        <StackPanel Orientation="Horizontal">
+                            <Image Source="{Binding ElementName=mainWindow, Path=Icon}" Margin="10 0 0 0" Width="20" Height="20"/>
+                            <TextBlock Text="{Binding ElementName=mainWindow,Path=Title}" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="5,0" Foreground="White"/>
+                        </StackPanel>
+                    </Grid>
+
+                    <!-- Start: Button Close | Restore | Minimize -->
+                    <StackPanel Grid.Row="0" Grid.Column="2" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="10,0,5,0" Height="30" Orientation="Horizontal" FlowDirection="RightToLeft">
+                        <Button x:Name="btnClose" Style="{StaticResource IconButtonsStyle}" Content="{DynamicResource close}" Click="close_Click" Tag="IsCloseButton"/>
+                        <Button x:Name="btnRestore" Margin="5,0" Click="maximize_Click">
+                            <Button.Style>
+                                <Style TargetType="{x:Type Button}" BasedOn="{StaticResource IconButtonsStyle}">
+                                    <Setter Property="Content" Value="{DynamicResource maximize}"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding ElementName=mainWindow, Path=WindowState}" Value="Maximized">
+                                            <Setter Property="Content" Value="{DynamicResource restore}"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+                        <Button x:Name="btnMinimize" Style="{DynamicResource IconButtonsStyle}" Content="{DynamicResource minimize}" Click="minimize_Click"/>
+                    </StackPanel>
+                    <!-- End: Button Close | Restore | Minimize -->
+
+                    <!-- Toogle-button | Home-Button -->
+                    <StackPanel Grid.Row="1" Grid.Column="0" HorizontalAlignment="Left"  Margin="10,0,10,0" Height="30" Orientation="Horizontal">
+                        <ToggleButton x:Name="Tg_Btn" Content="{DynamicResource burger}" VerticalAlignment="Center" Style="{DynamicResource iToggleButtonStyle}" HorizontalAlignment="Center" BorderThickness="0"  Background="Transparent" Height="30" Width="30">
+                            <ToggleButton.Triggers>
+                                <EventTrigger RoutedEvent="ToggleButton.Unchecked">
+                                    <BeginStoryboard>
+                                        <Storyboard x:Name="ShowStackPanel">
+                                            <DoubleAnimation Storyboard.TargetName="Menu" Storyboard.TargetProperty="Width" BeginTime="0:0:0" From="40" To="130" Duration="0:0:0.3"/>
+                                            <DoubleAnimation Storyboard.TargetName="categorySection" Storyboard.TargetProperty="Opacity" BeginTime="0:0:0" From="0" To="1" Duration="0:0:0.3"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </EventTrigger>
+                                <EventTrigger RoutedEvent="ToggleButton.Checked">
+                                    <BeginStoryboard>
+                                        <Storyboard x:Name="HideStackPanel">
+                                            <DoubleAnimation Storyboard.TargetName="Menu" Storyboard.TargetProperty="Width" BeginTime="0:0:0" From="130" To="40" Duration="0:0:0.3"/>
+                                            <DoubleAnimation Storyboard.TargetName="categorySection" Storyboard.TargetProperty="Opacity" BeginTime="0:0:0" From="1" To="0" Duration="0:0:0.3"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </EventTrigger>
+                            </ToggleButton.Triggers>
+                        </ToggleButton>
+                    </StackPanel>
+                    <Border Grid.Row="1" Grid.Column="1" MaxWidth="400" MinWidth="200" HorizontalAlignment="Left" Height="25" VerticalAlignment="Center" CornerRadius="10 10 0 0" Background="#EFF2F8">
+                        <Grid>
+                            <controls:AutoCompleteBox FilterMode="Contains" GotFocus="searchBox_GotFocus" LostFocus="searchBox_LostFocus" MaxDropDownHeight="200" Height="25" ItemsSource="{Binding TaskNames}" PreviewKeyDown="searchBox_PreviewKeyDown" VerticalContentAlignment="Bottom" Background="Transparent" x:Name="searchBox" Placeholder="SEARCH A TASK" FontSize="12" FontWeight="SemiBold" Foreground="Black" BorderThickness="0">
+                            </controls:AutoCompleteBox>
+                            <Button HorizontalAlignment="Right" VerticalAlignment="Top" Width="25" Height="25" Grid.Column="2" Margin="0 0 -8 0" Style="{StaticResource SearchButton}"/>
+                        </Grid>
+                    </Border>
+                    <!-- End: Button Close | Restore | Minimize -->
+                    <StackPanel Grid.Column="2" Orientation="Horizontal" Grid.RowSpan="2" Margin="0 0 10 0" VerticalAlignment="Bottom" HorizontalAlignment="Right">
+                        <Grid>
+                            <materialDesign:PopupBox VerticalAlignment="Center" Name="stat"  Height="40" PopupVerticalOffset="-5" HorizontalAlignment="Right" Visibility="Visible" PlacementMode="BottomAndAlignCentres" PopupMode="Click" StaysOpen="True">
+                                <materialDesign:PopupBox.ToggleContent>
+                                    <Path Width="30" Height="30"/>
+                                </materialDesign:PopupBox.ToggleContent>
+                                <Border CornerRadius="5" Padding="10 10" Background="#fff" materialDesign:ShadowAssist.Darken="True">
+                                    <Grid MinHeight="200" Width="Auto">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition/>
+                                        </Grid.RowDefinitions>
+                                        <TextBlock Text="Your statistics" FontSize="15" FontWeight="Bold" FontFamily="Poppins"/>
+                                        <TextBlock Style="{StaticResource MainText}" FontSize="13" Padding="0 5 0 0" FontFamily="Roboto" Grid.Row="1" Foreground="Black" FontWeight="Normal">
+                                    <Run>Logged in</Run>
+                                    <Run Text="{Binding Path=LoggedUser.LoggedIn, Mode=OneTime}" FontWeight="Bold" />
+                                    <Run Text="days ago."/>
+                                        </TextBlock>
+                                        <TabControl  Margin="0 -15 0 0" Grid.Row="2">
+                                            <TabItem >
+                                                <TabItem.Header>
+                                                    <TextBlock Text="Overview" Margin="0 0 0 -20" FontSize="14" FontWeight="Bold"/>
+                                                </TabItem.Header>
+                                                <Grid Margin="10">
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition/>
+                                                        <RowDefinition/>
+                                                    </Grid.RowDefinitions>
+                                                    <Grid HorizontalAlignment="Center" Width="230">
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="*"/>
+                                                            <ColumnDefinition Width="Auto"/>
+                                                        </Grid.ColumnDefinitions>
+                                                        <StackPanel Grid.Column="0">
+                                                            <TextBlock Style="{StaticResource MainText}" Text="Pending tasks" FontSize="13" Padding="0 5 0 0" FontFamily="Roboto"  Foreground="Black" FontWeight="Normal"/>
+                                                            <TextBlock Style="{StaticResource MainText}" Text="Important tasks" FontSize="13" Padding="0 5 0 0" FontFamily="Roboto"  Foreground="Black" FontWeight="Normal"/>
+                                                            <TextBlock Style="{StaticResource MainText}" Text="Completed tasks" FontSize="13" Padding="0 5 0 0" FontFamily="Roboto"  Foreground="Black" FontWeight="Normal"/>
+                                                            <TextBlock Style="{StaticResource MainText}" Text="Lists" FontSize="13" Padding="0 5 0 0" FontFamily="Roboto"  Foreground="Black" FontWeight="Normal"/>
+                                                            <TextBlock Style="{StaticResource MainText}" Text="Removed tasks" FontSize="13" Padding="0 5 0 0" FontFamily="Roboto"  Foreground="Black" FontWeight="Normal"/>
+                                                        </StackPanel>
+                                                        <StackPanel Grid.Column="1">
+                                                            <TextBlock Style="{StaticResource MainText}" Text="{Binding AllTasksCount}" FontSize="13" Padding="0 5 0 0" FontFamily="Roboto" Grid.Row="1" Foreground="Black" FontWeight="Bold"/>
+                                                            <TextBlock Style="{StaticResource MainText}" Text="{Binding ImportantTasksCount}" FontSize="13" Padding="0 5 0 0" FontFamily="Roboto" Grid.Row="1" Foreground="Black" FontWeight="Bold"/>
+                                                            <TextBlock Style="{StaticResource MainText}" Text="{Binding CompletedTasksCount}" FontSize="13" Padding="0 5 0 0" FontFamily="Roboto" Grid.Row="1" Foreground="Black" FontWeight="Bold"/>
+                                                            <TextBlock Style="{StaticResource MainText}" Text="{Binding Lists}" FontSize="13" Padding="0 5 0 0" FontFamily="Roboto" Grid.Row="1" Foreground="Black" FontWeight="Bold"/>
+                                                            <TextBlock Style="{StaticResource MainText}" Text="{Binding RemovedTasksCount}" FontSize="13" Padding="0 5 0 0" FontFamily="Roboto" Grid.Row="1" Foreground="Black" FontWeight="Bold"/>
+                                                        </StackPanel>
+                                                    </Grid>
+                                                    <StackPanel Grid.Row="1">
+                                                        <Separator Style="{StaticResource MaterialDesignDarkSeparator}" />
+                                                        <Grid Margin="0 -10 0 0">
+                                                            <Grid.RowDefinitions>
+                                                                <RowDefinition Height="Auto"/>
+                                                                <RowDefinition Height="*"/>
+                                                            </Grid.RowDefinitions>
+                                                            <TextBlock Style="{StaticResource MainText}" Margin="5" Text="Prioritization matrix" FontSize="13"  Padding="0 5 0 0" FontFamily="Poppins"  Foreground="Black" FontWeight="Bold"/>
+                                                            <lvc:CartesianChart Grid.Row="1" Height="200" LegendLocation="Right" Series="{Binding PrioritizationStatus}">
+                                                                <lvc:CartesianChart.AxisX>
+                                                                    <lvc:Axis Title="Priority" Labels="{Binding PriorityLabels}" Foreground="Black" FontWeight="Medium" HorizontalAlignment="Center">
+                                                                        <lvc:Axis.Separator>
+                                                                            <lvc:Separator Step="1" Stroke="{x:Null}" />
+                                                                        </lvc:Axis.Separator>
+                                                                    </lvc:Axis>
+                                                                </lvc:CartesianChart.AxisX>
+                                                                <lvc:CartesianChart.AxisY>
+                                                                    <lvc:Axis Title="Tasks Count" Foreground="Black" FontWeight="Medium"/>
+                                                                </lvc:CartesianChart.AxisY>
+                                                            </lvc:CartesianChart>
+                                                        </Grid>
+                                                    </StackPanel>
+                                                </Grid>
+                                            </TabItem>
+                                            <TabItem>
+                                                <TabItem.Header>
+                                                    <TextBlock Text="Daily" Margin="0 0 0 -20" FontSize="14" FontWeight="Bold"/>
+                                                </TabItem.Header>
+                                                <Grid Margin="10">
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition/>
+                                                        <RowDefinition/>
+                                                    </Grid.RowDefinitions>
+                                                    <Grid HorizontalAlignment="Center" Width="230">
+                                                        <StackPanel>
+                                                            <TextBlock Style="{StaticResource MainText}" Text="Today" FontSize="14" FontFamily="Poppins" HorizontalAlignment="Center" VerticalAlignment="Top" Foreground="Black" FontWeight="Bold"/>
+                                                            <lvc:Gauge Width="60" Margin="5" GaugeBackground="#e0e3e8" Height="60"  FontWeight="Bold" Uses360Mode="True" From="0" To="{Binding TodayTasksCount}" Value="{Binding TodayCompletedTasksCount}" >
+                                                                <lvc:Gauge.GaugeActiveFill>
+                                                                    <LinearGradientBrush>
+                                                                        <GradientStop Color="Yellow" Offset="0.0" />
+                                                                        <GradientStop Color="Orange" Offset="0.5" />
+                                                                        <GradientStop Color="Red" Offset="1.0" />
+                                                                    </LinearGradientBrush>
+                                                                </lvc:Gauge.GaugeActiveFill>
+                                                            </lvc:Gauge>
+                                                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin=" 0 5 0 0">
+                                                                <TextBlock Style="{StaticResource MainText}" Text="Today's goal: " FontSize="12" FontFamily="Poppins" HorizontalAlignment="Center" Foreground="Black" />
+                                                                <TextBlock Style="{StaticResource MainText}" Text="{Binding TodayCompletedTasksCount}" FontSize="12" FontWeight="Bold" FontFamily="Poppins" HorizontalAlignment="Center"  Foreground="Black" />
+                                                                <TextBlock Style="{StaticResource MainText}" Text=" / " FontSize="12" FontFamily="Poppins"  HorizontalAlignment="Center" Foreground="Black" />
+                                                                <TextBlock Style="{StaticResource MainText}" Text="{Binding TodayTasksCount}" FontSize="12" FontWeight="Bold" FontFamily="Poppins" HorizontalAlignment="Center"  Foreground="Black" />
+                                                                <TextBlock Style="{StaticResource MainText}" Text=" tasks." FontSize="12" FontFamily="Poppins"  HorizontalAlignment="Center" Foreground="Black" />
+                                                            </StackPanel>
+                                                        </StackPanel>
+                                                    </Grid>
+                                                    <StackPanel Grid.Row="1">
+                                                        <Separator Style="{StaticResource MaterialDesignDarkSeparator}" />
+                                                        <Grid Margin="0 -10 0 0">
+                                                            <Grid.RowDefinitions>
+                                                                <RowDefinition Height="Auto"/>
+                                                                <RowDefinition Height="*"/>
+                                                            </Grid.RowDefinitions>
+                                                            <TextBlock Margin="5" Style="{StaticResource MainText}" Name="chartTitle" Text="Completed in the last 7 days" FontSize="13" Padding="0 5 0 0" FontFamily="Poppins"  Foreground="Black" FontWeight="Bold"/>
+                                                            <TextBlock Margin="5" Style="{StaticResource MainText}" Name="chartTitle1" Text="Planned for next 7 days" Opacity="0" FontSize="13" Padding="0 5 0 0" FontFamily="Poppins"  Foreground="Black" FontWeight="Bold"/>
+                                                            <CheckBox Style="{StaticResource CheckBoxSortStyle}" Name="sortDaily" HorizontalAlignment="Right">
+                                                                <CheckBox.Triggers>
+                                                                    <EventTrigger RoutedEvent="CheckBox.Unchecked">
+                                                                        <BeginStoryboard>
+                                                                            <Storyboard x:Name="ShowCompletedLast7Days">
+                                                                                <DoubleAnimation Storyboard.Target="{Binding ElementName=completedPast7Days}" Storyboard.TargetProperty="Opacity" BeginTime="0:0:0" From="0" To="1" Duration="0:0:0.3"/>
+                                                                                <DoubleAnimation Storyboard.Target="{Binding ElementName=plannedNext7Days}" Storyboard.TargetProperty="Opacity" BeginTime="0:0:0" From="1" To="0" Duration="0:0:0.3"/>
+                                                                                <DoubleAnimation Storyboard.Target="{Binding ElementName=chartTitle}" Storyboard.TargetProperty="Opacity" BeginTime="0:0:0" From="0" To="1" Duration="0:0:0.3"/>
+                                                                                <DoubleAnimation Storyboard.Target="{Binding ElementName=chartTitle1}" Storyboard.TargetProperty="Opacity" BeginTime="0:0:0" From="1" To="0" Duration="0:0:0.3"/>
+                                                                            </Storyboard>
+                                                                        </BeginStoryboard>
+                                                                    </EventTrigger>
+                                                                    <EventTrigger RoutedEvent="CheckBox.Checked">
+                                                                        <BeginStoryboard>
+                                                                            <Storyboard x:Name="ShowPlannedNext7Days">
+                                                                                <DoubleAnimation Storyboard.Target="{Binding ElementName=completedPast7Days}" Storyboard.TargetProperty="Opacity" BeginTime="0:0:0" From="1" To="0" Duration="0:0:0.3"/>
+                                                                                <DoubleAnimation Storyboard.Target="{Binding ElementName=plannedNext7Days}" Storyboard.TargetProperty="Opacity" BeginTime="0:0:0" From="0" To="1" Duration="0:0:0.3"/>
+                                                                                <DoubleAnimation Storyboard.Target="{Binding ElementName=chartTitle}" Storyboard.TargetProperty="Opacity" BeginTime="0:0:0" From="1" To="0" Duration="0:0:0.3"/>
+                                                                                <DoubleAnimation Storyboard.Target="{Binding ElementName=chartTitle1}" Storyboard.TargetProperty="Opacity" BeginTime="0:0:0" From="0" To="1" Duration="0:0:0.3"/>
+                                                                            </Storyboard>
+                                                                        </BeginStoryboard>
+                                                                    </EventTrigger>
+                                                                </CheckBox.Triggers>
+                                                            </CheckBox>
+                                                            <lvc:CartesianChart Grid.Row="1" Name="completedPast7Days" Height="200" Series="{Binding CompletedLastSevenDays}">
+                                                                <lvc:CartesianChart.AxisX>
+                                                                    <lvc:Axis Title="Task Count" Foreground="Black" FontWeight="Medium" HorizontalAlignment="Center"/>
+                                                                </lvc:CartesianChart.AxisX>
+                                                                <lvc:CartesianChart.AxisY >
+                                                                    <lvc:Axis Title="Days" Labels="{Binding Last7DaysLabels}" Foreground="Black" FontWeight="Medium">
+                                                                        <lvc:Axis.Separator>
+                                                                            <lvc:Separator Step="1" Stroke="{x:Null}" />
+                                                                        </lvc:Axis.Separator>
+                                                                    </lvc:Axis>
+                                                                </lvc:CartesianChart.AxisY>
+                                                            </lvc:CartesianChart>
+                                                            <lvc:CartesianChart Grid.Row="1" Name="plannedNext7Days" Opacity="0" Height="200" Series="{Binding PlannedNextSevenDays}">
+                                                                <lvc:CartesianChart.AxisX>
+                                                                    <lvc:Axis Title="Task Count" Foreground="Black" FontWeight="Medium" HorizontalAlignment="Center"/>
+                                                                </lvc:CartesianChart.AxisX>
+                                                                <lvc:CartesianChart.AxisY >
+                                                                    <lvc:Axis Title="Days" Labels="{Binding Next7DaysLabels}" Foreground="Black" FontWeight="Medium">
+                                                                        <lvc:Axis.Separator>
+                                                                            <lvc:Separator Step="1" Stroke="{x:Null}" />
+                                                                        </lvc:Axis.Separator>
+                                                                    </lvc:Axis>
+                                                                </lvc:CartesianChart.AxisY>
+                                                            </lvc:CartesianChart>
+                                                        </Grid>
+                                                    </StackPanel>
+                                                </Grid>
+                                            </TabItem>
+                                            <TabItem >
+                                                <TabItem.Header>
+                                                    <TextBlock Text="Monthly" Margin="0 0 0 -20" FontSize="14" FontWeight="Bold"/>
+                                                </TabItem.Header>
+                                                <Grid Margin="10">
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition/>
+                                                        <RowDefinition/>
+                                                    </Grid.RowDefinitions>
+                                                    <Grid HorizontalAlignment="Center" Width="230">
+                                                        <StackPanel>
+                                                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                                                <TextBlock Style="{StaticResource MainText}" Text="{Binding CurrentMonth}" FontSize="14" FontFamily="Poppins" HorizontalAlignment="Center" VerticalAlignment="Top" Foreground="Black" FontWeight="Bold"/>
+                                                                <TextBlock Style="{StaticResource MainText}" Text=" statistics" FontSize="14" FontFamily="Poppins" HorizontalAlignment="Center" VerticalAlignment="Top" Foreground="Black" FontWeight="Bold"/>
+                                                            </StackPanel>
+                                                            <Grid>
+                                                                <Grid.ColumnDefinitions>
+                                                                    <ColumnDefinition Width="*"/>
+                                                                    <ColumnDefinition Width="Auto"/>
+                                                                    <ColumnDefinition Width="Auto"/>
+                                                                </Grid.ColumnDefinitions>
+                                                                <lvc:Gauge Width="60" Margin="0 0 -15 0" Grid.Column="2" GaugeBackground="#e0e3e8" Height="60"  FontWeight="Bold" Uses360Mode="True" From="0" To="{Binding CreatedTasksInCurrentMonth}" Value="{Binding CompletedTasksInCurrentMonth}" >
+                                                                    <lvc:Gauge.GaugeActiveFill>
+                                                                        <LinearGradientBrush>
+                                                                            <GradientStop Color="#6097cf" Offset="0.0" />
+                                                                            <GradientStop Color="#304c69" Offset="0.5" />
+                                                                            <GradientStop Color="#0e213d" Offset="1.0" />
+                                                                        </LinearGradientBrush>
+                                                                    </lvc:Gauge.GaugeActiveFill>
+                                                                </lvc:Gauge>
+                                                                <StackPanel Margin=" 0 5 0 0">
+                                                                    <TextBlock Style="{StaticResource MainText}" Padding="0 5 0 0" Text="Created tasks" FontSize="12" FontFamily="Poppins"  Foreground="Black" />
+                                                                    <TextBlock Style="{StaticResource MainText}" Padding="0 5 0 0" Text="Completed tasks" FontSize="12" FontFamily="Poppins" Foreground="Black" />
+                                                                    <TextBlock Style="{StaticResource MainText}" Padding="0 5 0 0" Text="The busiest day" FontSize="12" FontFamily="Poppins" Foreground="Black" />
+                                                                    <TextBlock Style="{StaticResource MainText}" Padding="0 5 0 0" Text="The freest day" FontSize="12" FontFamily="Poppins" Foreground="Black" />
+                                                                </StackPanel>
+                                                                <StackPanel Grid.Column="1" Margin=" 0 5 15 0">
+                                                                    <TextBlock Style="{StaticResource MainText}" Padding="0 5 0 0" Text="{Binding CreatedTasksInCurrentMonth}" FontSize="12" FontWeight="Bold" FontFamily="Poppins" HorizontalAlignment="Center"  Foreground="Black" />
+                                                                    <TextBlock Style="{StaticResource MainText}" Padding="0 5 0 0" Text="{Binding CompletedTasksInCurrentMonth}" FontSize="12" FontWeight="Bold" FontFamily="Poppins" HorizontalAlignment="Center"  Foreground="Black" />
+                                                                    <TextBlock Style="{StaticResource MainText}" Padding="0 5 0 0" Text="{Binding TheBusiestDay}" FontSize="12" FontWeight="Bold" FontFamily="Poppins" HorizontalAlignment="Center"  Foreground="Black" />
+                                                                    <TextBlock Style="{StaticResource MainText}" Padding="0 5 0 0" Text="{Binding TheFreestDay}" FontSize="12" FontWeight="Bold" FontFamily="Poppins" HorizontalAlignment="Center"  Foreground="Black" />
+                                                                </StackPanel>
+                                                            </Grid>
+                                                        </StackPanel>
+                                                    </Grid>
+                                                    <StackPanel Grid.Row="1">
+                                                        <Separator Style="{StaticResource MaterialDesignDarkSeparator}" />
+                                                        <Grid Margin="0 -10 0 0">
+                                                            <Grid.RowDefinitions>
+                                                                <RowDefinition Height="Auto"/>
+                                                                <RowDefinition Height="*"/>
+                                                            </Grid.RowDefinitions>
+                                                            <TextBlock Margin="5" Style="{StaticResource MainText}" Name="chartTitle2" Text="Completed in the last 4 weeks" FontSize="13" Padding="0 5 0 0" FontFamily="Poppins"  Foreground="Black" FontWeight="Bold"/>
+                                                            <TextBlock Margin="5" Style="{StaticResource MainText}" Name="chartTitle3" Text="Planned for next 4 weeks" Opacity="0" FontSize="13" Padding="0 5 0 0" FontFamily="Poppins"  Foreground="Black" FontWeight="Bold"/>
+                                                            <CheckBox Style="{StaticResource CheckBoxSortStyle}" Name="sortMonthly" HorizontalAlignment="Right">
+                                                                <CheckBox.Triggers>
+                                                                    <EventTrigger RoutedEvent="CheckBox.Unchecked">
+                                                                        <BeginStoryboard>
+                                                                            <Storyboard x:Name="ShowCompletedLast4Weeks">
+                                                                                <DoubleAnimation Storyboard.Target="{Binding ElementName=completedPast4Weeks}" Storyboard.TargetProperty="Opacity" BeginTime="0:0:0" From="0" To="1" Duration="0:0:0.3"/>
+                                                                                <DoubleAnimation Storyboard.Target="{Binding ElementName=plannedNext4Weeks}" Storyboard.TargetProperty="Opacity" BeginTime="0:0:0" From="1" To="0" Duration="0:0:0.3"/>
+                                                                                <DoubleAnimation Storyboard.Target="{Binding ElementName=chartTitle2}" Storyboard.TargetProperty="Opacity" BeginTime="0:0:0" From="0" To="1" Duration="0:0:0.3"/>
+                                                                                <DoubleAnimation Storyboard.Target="{Binding ElementName=chartTitle3}" Storyboard.TargetProperty="Opacity" BeginTime="0:0:0" From="1" To="0" Duration="0:0:0.3"/>
+                                                                            </Storyboard>
+                                                                        </BeginStoryboard>
+                                                                    </EventTrigger>
+                                                                    <EventTrigger RoutedEvent="CheckBox.Checked">
+                                                                        <BeginStoryboard>
+                                                                            <Storyboard x:Name="ShowPlannedNext4Weeks">
+                                                                                <DoubleAnimation Storyboard.Target="{Binding ElementName=completedPast4Weeks}" Storyboard.TargetProperty="Opacity" BeginTime="0:0:0" From="1" To="0" Duration="0:0:0.3"/>
+                                                                                <DoubleAnimation Storyboard.Target="{Binding ElementName=plannedNext4Weeks}" Storyboard.TargetProperty="Opacity" BeginTime="0:0:0" From="0" To="1" Duration="0:0:0.3"/>
+                                                                                <DoubleAnimation Storyboard.Target="{Binding ElementName=chartTitle2}" Storyboard.TargetProperty="Opacity" BeginTime="0:0:0" From="1" To="0" Duration="0:0:0.3"/>
+                                                                                <DoubleAnimation Storyboard.Target="{Binding ElementName=chartTitle3}" Storyboard.TargetProperty="Opacity" BeginTime="0:0:0" From="0" To="1" Duration="0:0:0.3"/>
+                                                                            </Storyboard>
+                                                                        </BeginStoryboard>
+                                                                    </EventTrigger>
+                                                                </CheckBox.Triggers>
+                                                            </CheckBox>
+                                                            <lvc:CartesianChart Grid.Row="1" Name="completedPast4Weeks" Height="200" Series="{Binding CompletedLastFourWeeks}">
+                                                                <lvc:CartesianChart.AxisX>
+                                                                    <lvc:Axis Title="Task Count" Foreground="Black" FontWeight="Medium" HorizontalAlignment="Center"/>
+                                                                </lvc:CartesianChart.AxisX>
+                                                                <lvc:CartesianChart.AxisY >
+                                                                    <lvc:Axis Title="Weeks" Labels="{Binding Last4WeeksLabels}" Foreground="Black" FontWeight="Medium">
+                                                                        <lvc:Axis.Separator>
+                                                                            <lvc:Separator Step="1" Stroke="{x:Null}" />
+                                                                        </lvc:Axis.Separator>
+                                                                    </lvc:Axis>
+                                                                </lvc:CartesianChart.AxisY>
+                                                            </lvc:CartesianChart>
+                                                            <lvc:CartesianChart Grid.Row="1" Name="plannedNext4Weeks" Opacity="0" Height="200" Series="{Binding PlannedNextFourWeeks}">
+                                                                <lvc:CartesianChart.AxisX>
+                                                                    <lvc:Axis Title="Task Count" Foreground="Black" FontWeight="Medium" HorizontalAlignment="Center"/>
+                                                                </lvc:CartesianChart.AxisX>
+                                                                <lvc:CartesianChart.AxisY >
+                                                                    <lvc:Axis Title="Weeks" Labels="{Binding Next4WeeksLabels}" Foreground="Black" FontWeight="Medium">
+                                                                        <lvc:Axis.Separator>
+                                                                            <lvc:Separator Step="1" Stroke="{x:Null}" />
+                                                                        </lvc:Axis.Separator>
+                                                                    </lvc:Axis>
+                                                                </lvc:CartesianChart.AxisY>
+                                                            </lvc:CartesianChart>
+                                                        </Grid>
+                                                    </StackPanel>
+                                                </Grid>
+                                            </TabItem>
+                                        </TabControl>
+                                    </Grid>
+                                </Border>
+                            </materialDesign:PopupBox>
+                            <ToggleButton x:Name="statistics" Margin=" 0 0 5 0" Checked="statistics_Checked" Unchecked="statistics_Unchecked" Content="{DynamicResource statistics}"  VerticalAlignment="Center" Style="{DynamicResource iToggleButtonStyle}" HorizontalAlignment="Right" BorderThickness="0"  Background="Transparent" Height="30" Width="30"/>
+                        </Grid>
+                        <materialDesign:PopupBox VerticalAlignment="Bottom"  PopupVerticalOffset="-7" HorizontalAlignment="Right" Visibility="Visible" PlacementMode="BottomAndAlignCentres" PopupMode="Click" StaysOpen="True">
+                            <materialDesign:PopupBox.ToggleContent>
+                                <Grid >
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid>
+                                        <Ellipse Height="40" Width="40" HorizontalAlignment="Left" VerticalAlignment="Bottom">
+                                            <Ellipse.Fill>
+                                                <ImageBrush ImageSource="/Assets/Images/profile1.jpg" Stretch="UniformToFill"/>
+                                            </Ellipse.Fill>
+                                        </Ellipse>
+                                        <Ellipse Height="40" Width="40" HorizontalAlignment="Left" VerticalAlignment="Bottom">
+                                            <Ellipse.Fill>
+                                                <ImageBrush ImageSource="{Binding UserImage}" Stretch="UniformToFill"/>
+                                            </Ellipse.Fill>
+                                        </Ellipse>
+                                    </Grid>
+                                    <Grid VerticalAlignment="Bottom" Grid.Column="1" Margin="5,0,0,0" Width="Auto" MaxWidth="200">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                        </Grid.RowDefinitions>
+                                        <TextBlock x:Name="userName" Text="{Binding LoggedUser.UserName}" Style="{StaticResource MainText}"/>
+                                        <StackPanel Orientation="Horizontal" Grid.Row="1">
+                                            <TextBlock  Text="Today you are:" Style="{StaticResource TitleText}" VerticalAlignment="Center"/>
+                                            <Path Name="userStatus" Data="{DynamicResource sad}" Width="15"  Stretch="Uniform" Fill="#fcc31f" Margin="5 0 0 0"/>
+                                        </StackPanel>
+                                    </Grid>
+                                </Grid>
+                            </materialDesign:PopupBox.ToggleContent>
+                            <Border CornerRadius="5" Background="#fff" materialDesign:ShadowAssist.Darken="True">
+                                <StackPanel Width="180">
+                                    <Button  Height="40" Style="{StaticResource MaterialDesignFlatButton}" HorizontalContentAlignment="Left" materialDesign:ButtonAssist.CornerRadius="5 5 0 0" Command="{Binding LoadPhoto}">
+                                        <StackPanel Orientation="Horizontal" >
+                                            <Path Data="{DynamicResource photo}" Margin="5 0 0 0" VerticalAlignment="Center"  Fill="#687681" Height="15" Width="15" Stretch="Uniform"/>
+                                            <Label Content="Change photo" FontWeight="Medium" FontSize="13" Margin="15 0 0 0" VerticalAlignment="Center"/>
+                                        </StackPanel>
+                                    </Button>
+                                    <Button  Height="40" Click="fellsToday_Click" Style="{StaticResource MaterialDesignFlatButton}"> 
+                                        <StackPanel Orientation="Horizontal">
+                                            <Path Data="{DynamicResource status}" Margin="5 0 0 0" VerticalAlignment="Center"  Fill="#687681" Height="15" Width="15" Stretch="Uniform"/>
+                                            <Label Content="How do you feel?" FontWeight="Medium" FontSize="13" Margin="15 0 0 0" VerticalAlignment="Center"/>
+                                        </StackPanel>
+                                    </Button>
+                                    <Button  Height="40" Click="logOut_Click" Style="{StaticResource MaterialDesignFlatButton}" HorizontalContentAlignment="Left" materialDesign:ButtonAssist.CornerRadius="0 0 5 5">
+                                        <StackPanel Orientation="Horizontal" >
+                                            <Path Data="{DynamicResource logout}" Margin="5 0 0 0" VerticalAlignment="Center"  Fill="#687681" Height="15" Width="15" Stretch="Uniform"/>
+                                            <Label Content="Logout" FontWeight="Medium" FontSize="13" Margin="15 0 0 0" VerticalAlignment="Center"/>
+                                        </StackPanel>
+                                    </Button>
+                                </StackPanel>
+                            </Border>
+                        </materialDesign:PopupBox>
+                        <!--Profile Image and Username Code-->
+                    </StackPanel>
+                </Grid>
+                <!--CONTENT-->
+                <Grid Grid.Row="1" Background="White">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+
+                    <Rectangle Grid.Column="0" Fill="#e0e3e8"/>
+                    <Rectangle Grid.Column="1" Fill="#e0e3e8" />
+                    <Border BorderThickness="0 0 1 0" Name="menuSection" BorderBrush="#0e213d" >
+                        <Grid Name="Menu" Width="130">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition MinHeight="185"/>
+                                <RowDefinition Height="80"/>
+                            </Grid.RowDefinitions>
+                            <StackPanel Grid.Row="0" HorizontalAlignment="Center" Margin="5 2 0 0">
+                                <Button x:Name="btnTasks" Style="{DynamicResource PopupButtonStyle}" Click="btnTasks_Click">
+                                    <RadioButton GroupName="MenuItem" Name="inboxBtn" Style="{StaticResource MenuButtonStyle}" Foreground="#246fe0" Tag="Inbox" Content="{DynamicResource inbox}" VerticalAlignment="Center"/>
+                                </Button>
+                                <Button x:Name="btnToday" Style="{DynamicResource PopupButtonStyle}" Click="btnToday_Click">
+                                    <RadioButton GroupName="MenuItem" IsChecked="True" Style="{StaticResource MenuButtonStyle}" Foreground="DarkGreen" Tag="Today" Content="{DynamicResource today}" VerticalAlignment="Center"/>
+                                </Button>
+                                <Button x:Name="btnPlanned" Style="{DynamicResource PopupButtonStyle}" Click="btnPlanned_Click">
+                                    <RadioButton GroupName="MenuItem" Style="{StaticResource MenuButtonStyle}" Foreground="#692fc2" Tag="Planned" Content="{DynamicResource planned}" VerticalAlignment="Center"/>
+                                </Button>
+                                <Button x:Name="btnImportant" Style="{DynamicResource PopupButtonStyle}" Click="btnImportant_Click">
+                                    <RadioButton GroupName="MenuItem" Style="{StaticResource MenuButtonStyle}" Foreground="#e84133" Tag="Important" Content="{DynamicResource important}" VerticalAlignment="Center"/>
+                                </Button>
+                            </StackPanel>
+                            
+                            <Grid Grid.Row="1" Name="categorySection">
+                                <Grid.Style>
+                                    <Style TargetType="Grid">
+                                        <Style.Triggers>
+                                            <Trigger Property="Opacity" Value="0">
+                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                            </Trigger>
+                                            <Trigger Property="Opacity" Value="1">
+                                                <Setter Property="Visibility" Value="Visible"/>
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Grid.Style>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="1*"/>
+                                    <RowDefinition Height="30"/>
+                                </Grid.RowDefinitions>
+                                <Separator  Style="{StaticResource SeparatorStyle}" VerticalAlignment="Top" Height="1" Background="#222d3d"/>
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="*"/>
+                                    </Grid.RowDefinitions>
+                                    <TextBlock Text="Lists" Margin="5 5" FontFamily="SimSun"  FontSize="16" FontWeight="Bold"/>
+                                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Hidden" Style="{x:Null}" HorizontalScrollBarVisibility="Disabled">
+                                        <ListView ItemContainerStyle="{StaticResource MyListItemStyle}" ItemsSource="{Binding Categories}" PreviewMouseLeftButtonUp="categories_MouseLeftButtonDown" SelectedItem="{Binding SelectedCategory}" Name="categories" Tag="{Binding ElementName=contentContainer}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" Margin="0 0 0 0" Style="{StaticResource MaterialDesignListView}" >
+                                            <ListView.ContextMenu>
+                                                <ContextMenu>
+                                                    <ContextMenu.Resources>
+                                                        <SolidColorBrush x:Key="MaterialDesignPaper" Color="#fff"/>
+                                                    </ContextMenu.Resources>
+                                                    <MenuItem Header="Edit" FontSize="13" Click="EditCategory_Click" Command="">
+                                                        <MenuItem.Icon>
+                                                            <materialDesign:PackIcon Kind="Edit" Width="15" Height="15" FontStretch="Normal" Foreground="#545c6a"/>
+                                                        </MenuItem.Icon>
+                                                    </MenuItem>
+                                                    <MenuItem Header="Delete" FontSize="13" Command="{Binding RemoveCategory}" CommandParameter="{Binding PlacementTarget.Tag, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}">
+                                                        <MenuItem.Icon>
+                                                            <materialDesign:PackIcon Kind="Delete" Width="15" Height="15" FontStretch="Normal" Foreground="#545c6a"/>
+                                                        </MenuItem.Icon>
+                                                    </MenuItem>
+                                                </ContextMenu>
+                                            </ListView.ContextMenu>
+                                            <ListView.Template>
+                                                <ControlTemplate>
+                                                    <ItemsPresenter/>
+                                                </ControlTemplate>
+                                            </ListView.Template>
+                                            <ListView.ItemTemplate>
+                                                <DataTemplate>
+                                                    <StackPanel Orientation="Horizontal" Width="110">
+                                                        <Path Fill="#246fe0" Width="20" VerticalAlignment="Center" Data="{DynamicResource burger}" Height="20"/>
+                                                        <TextBox ContextMenu="{StaticResource TextBoxContextMenu}" Style="{StaticResource CategoryTitleTextBox}" KeyDown="RenameCategory" Name="title" IsEnabled="False" VerticalAlignment="Center" Text="{Binding CategoryName}" Margin="5 0 0 0" HorizontalAlignment="Left" Width="Auto"/>
+                                                    </StackPanel>
+                                                </DataTemplate>
+                                            </ListView.ItemTemplate>
+                                        </ListView>
+                                    </ScrollViewer>
+                                </Grid>
+                                <Border Width="125" Grid.Row="1" Height="30" Name="addCategory" >
+                                    <StackPanel Orientation="Horizontal">
+                                        <Path Data="{DynamicResource plus}"  Height="10" Width="10" Margin="5 0 0 0" VerticalAlignment="Center" Stretch="Uniform" Fill="#222d3d"/>
+                                        <TextBox ToolTip="Add category" ContextMenu="{StaticResource TextBoxContextMenu}" Margin="3 0 0 0" materialDesign:TextFieldAssist.UnderlineBrush="#0e213d" LostFocus="categoryName_LostFocus" Text="{Binding CategoryName, UpdateSourceTrigger=PropertyChanged}" Width="105" materialDesign:HintAssist.Hint="Add category" VerticalAlignment="Center" VerticalContentAlignment="Bottom" FontSize="12" Foreground="#222d3d" Name="categoryName">
+                                            <TextBox.Resources>
+                                                <ResourceDictionary>
+                                                    <ResourceDictionary.MergedDictionaries>
+                                                        <materialDesign:BundledTheme BaseTheme="Light" PrimaryColor="DeepPurple" SecondaryColor="Lime"/>
+                                                    </ResourceDictionary.MergedDictionaries>
+                                                </ResourceDictionary>
+                                            </TextBox.Resources>
+                                            <TextBox.InputBindings>
+                                                <KeyBinding Command="{Binding AddCategory}" CommandParameter="{Binding ElementName=mainWindow}" Key="Return" />
+                                            </TextBox.InputBindings>
+                                        </TextBox>
+                                    </StackPanel>
+                                </Border>
+                            </Grid>
+                            <StackPanel Grid.Row="2" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="5 0 0 2">
+                                <Button x:Name="btnCompleted" Style="{DynamicResource PopupButtonStyle}" Click="btnCompleted_Click">
+                                    <RadioButton GroupName="MenuItem" Style="{StaticResource MenuButtonStyle}" Foreground="#2896ff" Tag="Completed" Content="{DynamicResource completed}" VerticalAlignment="Center"/>
+                                </Button>
+                                <Button x:Name="btnTrash" Style="{DynamicResource PopupButtonStyle}" Click="btnTrash_Click">
+                                    <RadioButton GroupName="MenuItem" Style="{StaticResource MenuButtonStyle}" Foreground="#1f1f1f" Tag="Trash" Content="{DynamicResource trash}" VerticalAlignment="Center"/>
+                                </Button>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+                    <Frame Grid.Column="1"
+                       Name="contentContainer"
+                       NavigationUIVisibility="Hidden" Tag="{Binding ElementName=inboxBtn}">
+                    </Frame>
+                </Grid>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>

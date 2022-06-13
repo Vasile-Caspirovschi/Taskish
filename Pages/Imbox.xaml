@@ -1,0 +1,354 @@
+﻿<Page x:Class="Taskish.Pages.Imbox"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:Taskish.Pages"
+      xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+      xmlns:converter="clr-namespace:Taskish.Converters"
+      xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
+      xmlns:dat="clr-namespace:System.Windows.Data;assembly=PresentationFramework"
+      xmlns:sys="clr-namespace:System;assembly=mscorlib"
+      xmlns:controls="clr-namespace:Taskish.Controls"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="Inbox" Name="imboxPage" Loaded="imboxPage_Loaded">
+    <Page.Resources>
+        <converter:DueDateConverter x:Key="DueDateConverter"/>
+        <converter:StringEmptyConverter x:Key="StringEmptyConverter"/>
+        <converter:PriorityColorConverter x:Key="PriorityColorConverter"/>
+        <converter:MultiBoolToVisibility x:Key="MultiBoolToVisibility"/>
+        <converter:VisibilityHelper x:Key="BooleanToVisibilityConverter"/>
+
+        <CollectionViewSource Source="{Binding Tasks}" x:Key="TasksList">
+            <CollectionViewSource.SortDescriptions>
+                <scm:SortDescription PropertyName="Priority" Direction="Descending"/>
+                <scm:SortDescription PropertyName="CreatedOn" Direction="Descending"/>
+            </CollectionViewSource.SortDescriptions>
+        </CollectionViewSource>
+
+        <CollectionViewSource Source="{Binding PassedTasks}" x:Key="PassedTasksList">
+            <CollectionViewSource.SortDescriptions>
+                <scm:SortDescription PropertyName="Priority" Direction="Descending"/>
+            </CollectionViewSource.SortDescriptions>
+            <CollectionViewSource.GroupDescriptions>
+                <dat:PropertyGroupDescription PropertyName="IsPassed"/>
+            </CollectionViewSource.GroupDescriptions>
+        </CollectionViewSource>
+
+        <Style TargetType="{x:Type ListViewItem}">
+            <Setter Property="Height" Value="45"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Margin" Value="0 -2 0 0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ListViewItem}">
+                        <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="3" CornerRadius="7">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="30"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="40"/>
+                                </Grid.ColumnDefinitions>
+                                <CheckBox Margin="10 0 0 0" HorizontalAlignment="Left" Background="{Binding Priority, Converter={StaticResource PriorityColorConverter}}" Click="changeStatus_Click" IsChecked="{Binding IsCompleted}" Style="{DynamicResource CheckBoxStyle}"/>
+                                <Grid Margin="5 0 0 0" Grid.Column="1" >
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="1*"/>
+                                        <ColumnDefinition Width="1*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="{Binding Name}" Grid.Column="0"  TextTrimming="CharacterEllipsis" Name="name" FontWeight="Medium" Foreground="Black" VerticalAlignment="Top" Margin="0 2 0 0"  FontSize="15" FontFamily="Palatino Linotype"/>
+                                    <TextBlock Opacity="0" Grid.Column="1" Width="Auto" Text="{Binding Description, Converter={StaticResource StringEmptyConverter}, ConverterParameter='No description'}"  MaxHeight="30" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" Name="description" FontWeight="SemiBold" Foreground="Black" VerticalAlignment="Top" Margin="10 3 0 0" FontSize="12" FontFamily="Poppins"/>
+                                </Grid>
+                                <StackPanel Margin="5 0 0 0" Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Bottom">
+                                    <TextBlock Text="{Binding Category.CategoryName, TargetNullValue='Inbox', FallbackValue='Inbox'}" Foreground="Black" FontSize="13" FontWeight="Medium" VerticalAlignment="Bottom"/>
+                                    <TextBlock Text="{Binding DueDate, Converter={StaticResource DueDateConverter}, ConverterParameter='No date'}" Margin="10 0 0 0" Foreground="{Binding Priority, Converter={StaticResource PriorityColorConverter}}" FontWeight="Medium" FontSize="13" VerticalAlignment="Bottom"/>
+                                </StackPanel>
+                                <materialDesign:PopupBox ToolTip="Set priority" Margin="0 0 10 0" Name="setPriority" Visibility="Visible" PlacementMode="BottomAndAlignRightEdges" PopupVerticalOffset="-5" HorizontalAlignment="Right" PopupMode="Click" Grid.Column="2" materialDesign:RippleAssist.Feedback="Transparent" Width="Auto" StaysOpen="False" VerticalAlignment="Center" Height="30">
+                                    <materialDesign:PopupBox.ToggleContent>
+                                        <Path Data="{DynamicResource star}"  Fill="{Binding Priority, Converter={StaticResource PriorityColorConverter}}" Style="{DynamicResource PriorityStartStyle}" x:Name="priority" Height="20" Width="20" Stretch="Uniform" VerticalAlignment="Center"/>
+                                    </materialDesign:PopupBox.ToggleContent>
+                                    <Border  CornerRadius="5" Padding="5" Background="White">
+                                        <StackPanel Width="150">
+                                            <TextBlock Width="130" FontSize="10" TextWrapping="Wrap" Margin="0 0 0 5">
+                                                <Run Text="Set priority:"/>
+                                                <LineBreak/>
+                                                <Run Text="high, medium, low or none." FontWeight="Medium"/>
+                                            </TextBlock>
+                                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                                <Button Tag="{Binding Priority}" Click="SetHighPriority_Click">
+                                                    <Button.Template>
+                                                        <ControlTemplate>
+                                                            <Path Data="{DynamicResource star}" Style="{StaticResource PriorityStartStyle}" Margin="3" Width="20" Height="20" Stretch="Uniform" Fill="#de4c4a"/>
+                                                        </ControlTemplate>
+                                                    </Button.Template>
+                                                </Button>
+                                                <Button Tag="{Binding Priority}" Click="SetMediumPriority_Click">
+                                                    <Button.Template>
+                                                        <ControlTemplate>
+                                                            <Path Data="{DynamicResource star}" Style="{StaticResource PriorityStartStyle}" Margin="3" Width="20" Height="20" Stretch="Uniform" Fill="#f49c18"/>
+                                                        </ControlTemplate>
+                                                    </Button.Template>
+                                                </Button>
+                                                <Button Tag="{Binding Priority}" Click="SetLowPriority_Click">
+                                                    <Button.Template>
+                                                        <ControlTemplate>
+                                                            <Path Data="{DynamicResource star}" Style="{StaticResource PriorityStartStyle}" Margin="3" Width="20" Height="20" Stretch="Uniform" Fill="#4073d6"/>
+                                                        </ControlTemplate>
+                                                    </Button.Template>
+                                                </Button>
+                                                <Button Tag="{Binding Priority}" Click="SetNonePriority_Click">
+                                                    <Button.Template>
+                                                        <ControlTemplate>
+                                                            <Path Data="{DynamicResource star}" Style="{StaticResource PriorityStartStyle}" Margin="3" Width="20" Height="20" Stretch="Uniform" Fill="#687681"/>
+                                                        </ControlTemplate>
+                                                    </Button.Template>
+                                                </Button>
+                                            </StackPanel>
+                                        </StackPanel>
+                                    </Border>
+                                </materialDesign:PopupBox>
+                            </Grid>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="IsMouseOver" Value="True"/>
+                                </MultiTrigger.Conditions>
+                                <MultiTrigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="description" Storyboard.TargetProperty="Opacity" BeginTime="0:0:0" From="0" To="1" Duration="0:0:0.2" />
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </MultiTrigger.EnterActions>
+                                <MultiTrigger.ExitActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="description" Storyboard.TargetProperty="Opacity" BeginTime="0:0:0" From="1" To="0" Duration="0:0:0.2" />
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </MultiTrigger.ExitActions>
+                                <Setter Property="Background" Value="#edeaf4"/>
+                            </MultiTrigger>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter Property="Background" Value="#eff3fb"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+    </Page.Resources>
+    <Grid>
+        <Border CornerRadius="5" Background="#d8d5ff">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="70"/>
+                </Grid.RowDefinitions>
+                <Grid  Margin="20 20 0 0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <StackPanel Orientation="Horizontal">
+                        <Path Data="{DynamicResource inbox}" Width="25" Height="25" VerticalAlignment="Center" HorizontalAlignment="Left" Fill="#246fe0" Stretch="Uniform"/>
+                        <TextBlock Text="Inbox" FontSize="22" FontFamily="Constantia" Margin="10 0 0 0" Foreground="Black" VerticalAlignment="Center" FontWeight="SemiBold" />
+                    </StackPanel>
+                    <materialDesign:PopupBox Visibility="Visible" IsEnabled="{Binding ElementName=tasksList, Path=HasItems}" PlacementMode="BottomAndAlignCentres" PopupMode="Click" PopupHorizontalOffset="20" PopupVerticalOffset="-5" materialDesign:RippleAssist.Feedback="Transparent" Width="Auto" StaysOpen="True"  Margin="0 0 30 0" HorizontalAlignment="Right" VerticalAlignment="Center" Height="30">
+                        <materialDesign:PopupBox.ToggleContent>
+                            <Path Width="20" Height="20" Fill="#0e213d" Style="{StaticResource PriorityStartStyle}" Stretch="Uniform" Data="{DynamicResource print}" Tag="print"/>
+                        </materialDesign:PopupBox.ToggleContent>
+                        <Border CornerRadius="5" Padding="5" Background="White">
+                            <StackPanel Orientation="Horizontal">
+                                <Button Width="30" Margin="5 5" Height="30" Command="{Binding ExportTasksToWord}" CommandParameter="{Binding ElementName=imboxPage}" Style="{StaticResource IconButtonsStyle}" Content="{DynamicResource word}" Tag="word"/>
+                                <Button Width="30" Margin="5 5" Height="30" Command="{Binding ExportTasksToPdf}" CommandParameter="{Binding ElementName=imboxPage}" Style="{StaticResource IconButtonsStyle}" Content="{DynamicResource pdf}" Tag="pdf"/>
+                            </StackPanel>
+                        </Border>
+                    </materialDesign:PopupBox>
+                </Grid>
+                
+                    <ScrollViewer  Grid.Row="1" Style="{StaticResource MyScroll}" HorizontalScrollBarVisibility="Disabled">
+                        <StackPanel Margin="20 10 0 0">
+                            <ListView Name="tasksList" MouseDoubleClick="tasksList_MouseDoubleClick" Width="Auto" Style="{x:Null}" ItemsSource="{Binding Source={StaticResource TasksList}}" Background="Transparent" BorderThickness="0"  >
+                                <ListView.Template>
+                                    <ControlTemplate>
+                                        <ItemsPresenter/>
+                                    </ControlTemplate>
+                                </ListView.Template>
+                            </ListView>
+                        <ListView Name="passedTasksList" MouseDoubleClick="tasksList_MouseDoubleClick" Width="Auto" Style="{x:Null}" ItemsSource="{Binding Source={StaticResource PassedTasksList}}" Background="Transparent" BorderThickness="0"  >
+                                <ListView.Template>
+                                    <ControlTemplate>
+                                        <ItemsPresenter/>
+                                    </ControlTemplate>
+                                </ListView.Template>
+                                <ListView.GroupStyle>
+                                    <GroupStyle>
+                                        <GroupStyle.HeaderTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding Path=Name, Converter={StaticResource StringEmptyConverter}, ConverterParameter='Without a due date'}" FontSize="14" FontWeight="SemiBold">
+                                                </TextBlock>
+                                            </DataTemplate>
+                                        </GroupStyle.HeaderTemplate>
+                                        <GroupStyle.ContainerStyle>
+                                            <Style TargetType="{x:Type GroupItem}">
+                                                <Setter Property="Margin" Value="0,0,0,5"/>
+                                                <Setter Property="Template">
+                                                    <Setter.Value>
+                                                        <ControlTemplate TargetType="{x:Type GroupItem}">
+                                                            <Expander IsExpanded="True" Background="Transparent">
+                                                                <Expander.Header>
+                                                                    <Grid>
+                                                                        <StackPanel Orientation="Horizontal" Margin="-20 0 0 0" HorizontalAlignment="Left" Height="20" >
+                                                                            <Path Data="{DynamicResource passed}" Width="20" Height="20" VerticalAlignment="Center" Margin="5,0,0,0" HorizontalAlignment="Left" Fill="#b22f25" Stretch="Uniform"/>
+                                                                            <TextBlock FontWeight="Bold" FontSize="14" Foreground="#b22f25" Text="{Binding Path=Name}" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="5,0,0,0" Width="150"/>
+                                                                        </StackPanel>
+                                                                        <Button Style="{StaticResource IconButtonStyle}" Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Page}},Path=DataContext.MoveToTrashTasks}" CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Page}}}" HorizontalAlignment="Right" Tag="delete" Width="25" Height="25" Name="deleteAllTask" Margin="0 0 -15 0" >
+                                                                            <materialDesign:PackIcon VerticalAlignment="Center" HorizontalAlignment="Center"  Width="20" Height="20" Kind="TrashCanOutline" Foreground="{Binding RelativeSource={RelativeSource AncestorType={x:Type Button}}, Path=Foreground}"/>
+                                                                        </Button>
+                                                                    </Grid>
+                                                                </Expander.Header>
+                                                                <Expander.Content>
+                                                                    <ItemsPresenter/>
+                                                                </Expander.Content>
+                                                            </Expander>
+                                                        </ControlTemplate>
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </Style>
+                                        </GroupStyle.ContainerStyle>
+                                    </GroupStyle>
+                                </ListView.GroupStyle>
+                            </ListView>
+                        </StackPanel>
+                    </ScrollViewer>
+                    <controls:GetStarted x:Name="GetStarted" Text="There are no tasks!&#x0a;Let's start with creating your first task." Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" Background="Transparent">
+                        <controls:GetStarted.Visibility>
+                        <MultiBinding Converter="{StaticResource MultiBoolToVisibility}">
+                            <Binding ElementName="tasksList" Path="HasItems"/>
+                            <Binding ElementName="passedTasksList" Path="HasItems"/>
+                            <Binding Path="IsLoading"/>
+                        </MultiBinding>
+                        </controls:GetStarted.Visibility>
+                </controls:GetStarted>
+                <TextBlock Text="Loading tasks..." Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverter}}" Grid.Row="1" Name="loadingText" LineHeight="20" TextAlignment="Center" LineStackingStrategy="BlockLineHeight" Foreground="Black" FontSize="22" FontFamily="Gabriola" FontWeight="Bold" Margin="0 15 0 0" HorizontalAlignment="Center" TextWrapping="Wrap"/>
+                <Border  BorderThickness="2" Name="addTask" Grid.Row="2">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="2*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Button Width="30" Margin="5 0 0 0" VerticalAlignment="Center" Height="35" Command="{Binding AddTask}" CommandParameter="{Binding ElementName=imboxPage}" Style="{StaticResource IconButtonsStyle}" Content="{DynamicResource plus}" Tag="plus"/>
+                        <TextBox ToolTip="Add a new task" ContextMenu="{StaticResource TextBoxContextMenu}" Text="{Binding TaskName, UpdateSourceTrigger=PropertyChanged}" ToolTipService.ShowDuration="50000" Style="{StaticResource TextBoxWaterMark}" Name="taskName" Grid.Column="1" Tag="Write your task here...">
+                            <TextBox.InputBindings>
+                                <KeyBinding Command="{Binding AddTask}" CommandParameter="{Binding ElementName=imboxPage}" Key="Return" />
+                            </TextBox.InputBindings>
+                        </TextBox>
+
+                        <StackPanel Orientation="Horizontal" Grid.Column="2" HorizontalAlignment="Right" VerticalAlignment="Center">
+                            <StackPanel Orientation="Horizontal">
+                                <Grid Style="{StaticResource MouseOverEffect}" Height="35">
+                                    <materialDesign:PopupBox ToolTip="Select category" PopupVerticalOffset="20" x:Name="popUpCategory" Visibility="Visible" PlacementMode="TopAndAlignCentres"  PopupMode="Click" Grid.Column="2" materialDesign:RippleAssist.Feedback="Transparent" Width="Auto" StaysOpen="True" VerticalAlignment="Center" Height="30">
+                                        <materialDesign:PopupBox.ToggleContent>
+                                            <materialDesign:PackIcon Kind="HamburgerMenu" Foreground="#687681" Height="20" Width="20"/>
+                                        </materialDesign:PopupBox.ToggleContent>
+                                        <Border CornerRadius="5" Background="White" materialDesign:ShadowAssist.Darken="True">
+                                            <StackPanel Width="140">
+                                                <StackPanel Orientation="Horizontal" Height="30" Margin="10 5">
+                                                    <materialDesign:PackIcon Kind="HamburgerMenu" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="#687681" Width="20" Height="20"/>
+                                                    <ComboBox Width="90" Margin="10 0 0 0" materialDesign:TextFieldAssist.UnderlineBrush="#0e213d" IsEditable="True" ItemsSource="{Binding Categories}" FontWeight="Medium" HorizontalAlignment="Center" FontSize="13" Name="setCategory" DisplayMemberPath="CategoryName" SelectedValuePath="CategoryName" SelectedItem="{Binding TaskCategory}">
+                                                        <ComboBox.Resources>
+                                                            <SolidColorBrush x:Key="MaterialDesignPaper" Color="#fff"/>
+                                                        </ComboBox.Resources>
+                                                    </ComboBox>
+                                                </StackPanel>
+                                            </StackPanel>
+                                        </Border>
+                                    </materialDesign:PopupBox>
+                                </Grid>
+                                <TextBlock Margin="5 0 5 0" Text="{Binding ElementName=setCategory, Path=SelectedValue}" Name="selectedCategory" FontWeight="Medium" FontSize="13"  VerticalAlignment="Center" HorizontalAlignment="Left" />
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <Grid Style="{StaticResource MouseOverEffect}">
+                                    <materialDesign:PopupBox ToolTip="Select due date" PopupVerticalOffset="20" x:Name="popUpDate" Visibility="Visible" PlacementMode="TopAndAlignCentres" PopupMode="Click" Grid.Column="3" materialDesign:RippleAssist.Feedback="Transparent" Width="Auto" StaysOpen="True" VerticalAlignment="Center" Height="30">
+                                        <materialDesign:PopupBox.ToggleContent>
+                                            <Path Data="{DynamicResource calendar}" Margin="5 0 5 0" Fill="#687681" Height="15" Stretch="Uniform" VerticalAlignment="Center"/>
+                                        </materialDesign:PopupBox.ToggleContent>
+                                        <Border CornerRadius="5" Background="White" materialDesign:ShadowAssist.Darken="True">
+                                            <StackPanel Width="150">
+                                                <Button Click="setToday_Click" Style="{StaticResource MaterialDesignFlatButton}" HorizontalContentAlignment="Left" materialDesign:ButtonAssist.CornerRadius="5 5 0 0" Height="40">
+                                                    <StackPanel Orientation="Horizontal" >
+                                                        <Path Data="{DynamicResource todayDeadline}" Margin="5 0 0 0" VerticalAlignment="Center" Fill="#687681" Height="15" Width="15" Stretch="Uniform"/>
+                                                        <Label Content="Today" FontWeight="Medium" FontSize="13" Margin="15 0 0 0" VerticalAlignment="Center"/>
+                                                    </StackPanel>
+                                                </Button>
+                                                <Button Click="setTomorrow_Click" Height="40" Style="{StaticResource MaterialDesignFlatButton}">
+                                                    <StackPanel Orientation="Horizontal" Margin="-18 0 0 0">
+                                                        <materialDesign:PackIcon Kind="Calendar" Margin="5 0 0 0" Width="18" Height="18" Foreground="#687681" VerticalAlignment="Center"/>
+                                                        <Label Content="Tomorrow" FontWeight="Medium" FontSize="13" Margin="14 0 0 0" VerticalAlignment="Center"/>
+                                                    </StackPanel>
+                                                </Button>
+                                                <Button Click="setNextWeek_Click" Height="40" Style="{StaticResource MaterialDesignFlatButton}">
+                                                    <StackPanel Orientation="Horizontal" Margin="-13 0 0 0">
+                                                        <Path Data="{DynamicResource planned}" Margin="5 0 0 0" VerticalAlignment="Center" Fill="#687681" Height="15" Width="15" Stretch="Uniform"/>
+                                                        <Label Content="Next week" FontWeight="Medium" FontSize="13" Margin="15 0 0 0" VerticalAlignment="Center"/>
+                                                    </StackPanel>
+                                                </Button>
+                                                <Button Height="40" Style="{StaticResource MaterialDesignFlatButton}" materialDesign:ButtonAssist.CornerRadius="0 0 5 5">
+                                                    <ToggleButton x:Name="pickDueDate" Style="{StaticResource iToggleButtonStyle}" Content="Pick a date" Width="150" Height="30">
+                                                        <ToggleButton.Template>
+                                                            <ControlTemplate TargetType="ToggleButton">
+                                                                <StackPanel Orientation="Horizontal">
+                                                                    <Path Data="{DynamicResource calendar}" Margin="5 0 0 0" VerticalAlignment="Center" Fill="#687681" Height="15" Width="15" Stretch="Uniform"/>
+                                                                    <Label Content="{TemplateBinding Content}" FontSize="13" FontWeight="Medium" Margin="15 0 0 0" VerticalAlignment="Center"/>
+                                                                </StackPanel>
+                                                            </ControlTemplate>
+                                                        </ToggleButton.Template>
+                                                    </ToggleButton>
+                                                </Button>
+
+                                                <Popup  AllowsTransparency="True" IsOpen="{Binding ElementName=pickDueDate, Path=IsChecked}"   Placement="Center" StaysOpen="False">
+                                                    <Grid>
+                                                        <Grid.Resources>
+                                                            <Style x:Key="CustomCalendarDayButton" TargetType="CalendarDayButton"
+                                                        BasedOn="{StaticResource MaterialDesignCalendarDayButton}">
+                                                                <Setter Property="materialDesign:CalendarAssist.SelectionColor" Value="#2896ff" />
+                                                                <Setter Property="materialDesign:CalendarAssist.SelectionForegroundColor" Value="Black" />
+                                                            </Style>
+                                                            <Style x:Key="CustomCalendarButton" TargetType="CalendarButton"
+                                                    BasedOn="{StaticResource MaterialDesignCalendarButton}">
+                                                                <Setter Property="materialDesign:CalendarAssist.SelectionColor" Value="#2896ff" />
+                                                                <Setter Property="materialDesign:CalendarAssist.SelectionForegroundColor" Value="Black" />
+                                                            </Style>
+                                                        </Grid.Resources>
+                                                        <Calendar Name="dueDate" Background = "#343C3F" Foreground="White" materialDesign:CalendarAssist.HeaderBackground="#0e213d"
+                                                    materialDesign:CalendarAssist.HeaderForeground="White" SelectedDate="{Binding TaskDueDate}" CalendarDayButtonStyle="{StaticResource CustomCalendarDayButton}" CalendarButtonStyle="{StaticResource CustomCalendarButton}" />
+                                                    </Grid>
+                                                </Popup>
+                                            </StackPanel>
+                                        </Border>
+                                    </materialDesign:PopupBox>
+                                </Grid>
+                                <TextBlock Margin="5 0 5 0" Text="{Binding SelectedDate, ElementName=dueDate, StringFormat='{}{0:ddd, MMMM dd}'}" FontWeight="Medium" FontSize="13"  VerticalAlignment="Center" HorizontalAlignment="Left" />
+                            </StackPanel>
+                        </StackPanel>
+                    </Grid>
+                    <Border.Style>
+                        <Style TargetType="{x:Type Border}">
+                            <Setter Property="VerticalAlignment" Value="Top"/>
+                            <Setter Property="MinWidth" Value="400"/>
+                            <Setter Property="Margin" Value="20 10 20 0"/>
+                            <Setter Property="Background" Value="White"/>
+                            <Setter Property="Height" Value="40"/>
+                            <Setter Property="CornerRadius" Value="5"/>
+                        </Style>
+                    </Border.Style>
+                </Border>
+            </Grid>
+        </Border>
+    </Grid>
+</Page>

@@ -1,0 +1,25 @@
+﻿<Window x:Class="Taskish.Views.MessageWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Taskish.Views"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        mc:Ignorable="d"
+        Title="MessageWindow" Height="130" Width="300"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        WindowStartupLocation="CenterOwner" 
+        WindowState="Maximized" Background="#33000000">
+    <Border CornerRadius="10" VerticalAlignment="Center" Background="#FFFFFF" HorizontalAlignment="Center">
+        <Grid Width="300" Height="130"  Background="Transparent"  >
+            <StackPanel Orientation="Horizontal" Margin="15">
+                <materialDesign:PackIcon Name="Icon" Kind="Warning" Foreground="{Binding Color}" Width="50" Height="50"/>
+                <TextBlock Foreground="Black" FontWeight="Medium" Opacity="0.8" FontSize="14" Width="200" Name="messageBlock" Margin="15 5" Text="{Binding Message}" TextWrapping="Wrap"/>
+            </StackPanel>
+            <Button IsCancel="True" Foreground="#222d3d" Style="{DynamicResource MaterialDesignFlatButton}" HorizontalAlignment="Right" Margin="5" VerticalAlignment="Bottom">
+                Got It
+            </Button>
+        </Grid>
+    </Border>
+</Window>

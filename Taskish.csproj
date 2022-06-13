@@ -1,0 +1,58 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net6.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWPF>true</UseWPF>
+    <Platforms>AnyCPU;x64</Platforms>
+    <ApplicationIcon>Assets\Images\logo.ico</ApplicationIcon>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Assets\Images\calendar.png" />
+    <None Remove="Assets\Images\logo.ico" />
+    <None Remove="Assets\Images\logo.png" />
+    <None Remove="Assets\Images\next-week.png" />
+    <None Remove="Assets\Images\profile1.jpg" />
+    <None Remove="Assets\Images\tasks.png" />
+    <None Remove="Assets\Images\tomorrow.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Assets\Images\logo.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Assets\Images\logo.ico" />
+    <Resource Include="Assets\Images\tasks.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="DotNetProjects.WpfToolkit.Input" Version="6.1.94" />
+    <PackageReference Include="Google.Apis.Auth" Version="1.57.0" />
+    <PackageReference Include="Google.Apis.Gmail.v1" Version="1.57.0.2650" />
+    <PackageReference Include="LiveCharts.Wpf" Version="0.9.7" />
+    <PackageReference Include="MaterialDesignThemes" Version="4.5.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="6.0.5" />
+    <PackageReference Include="Spire.Doc" Version="10.5.9" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Assets\Images\logo.png" />
+    <Resource Include="Assets\Images\profile1.jpg" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Templates\EmailTemplate.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Templates\ExportTasksTemplate.dotx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Templates\ResetPasswordEmailTemplate.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>

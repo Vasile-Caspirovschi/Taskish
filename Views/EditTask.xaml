@@ -1,0 +1,199 @@
+﻿<Window x:Class="Taskish.Views.EditTask"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
+        xmlns:converter="clr-namespace:Taskish.Converters" 
+        mc:Ignorable="d"
+        Title="EditTask" 
+        WindowStyle="None"
+        AllowsTransparency="True"
+        WindowStartupLocation="CenterOwner" 
+        WindowState="Maximized" Background="#33000000" Name="editWindow">
+    <Window.Resources>
+        <ResourceDictionary>
+            <converter:DueDateConverter x:Key="DueDateConverter"/>
+            <converter:PriorityColorConverter x:Key="PriorityColorConverter"/>
+            
+        </ResourceDictionary>
+    </Window.Resources>
+    <Grid>
+        <Border CornerRadius="10" VerticalAlignment="Center" Background="#fff" HorizontalAlignment="Center">
+            <Grid Width="400" Height="220" Margin="10"  Background="Transparent"  >
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                    <Border BorderThickness="1" Width="400" Margin="0 0 0 0" Height="30" BorderBrush="#687681" CornerRadius="5">
+                        <StackPanel Orientation="Horizontal" >
+                            <TextBox x:Name="taskName" TextChanged="taskName_TextChanged" Text="{Binding Name}" ContextMenu="{StaticResource TextBoxContextMenu}" TextWrapping="Wrap" Foreground="Black" VerticalAlignment="Center" FontSize="14" FontWeight="Medium" FontFamily="Palatino Linotype" Width="350" Style="{StaticResource TextBoxWaterMark}"/>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                <CheckBox Margin="00 0 0 0" IsChecked="{Binding IsCompleted}" Checked="status_Checked" Unchecked="status_Unchecked" Name="status" Style="{DynamicResource CheckBoxStyle}"/>
+                                <materialDesign:PopupBox  ToolTip="Set priority" Margin="0 0 10 0"  Visibility="Visible"  PlacementMode="BottomAndAlignRightEdges" PopupVerticalOffset="-5" HorizontalAlignment="Right" PopupMode="Click"  materialDesign:RippleAssist.Feedback="Transparent" Width="Auto" StaysOpen="True" VerticalAlignment="Center" Height="30">
+                                    <materialDesign:PopupBox.ToggleContent>
+                                        <Path Data="{DynamicResource star}" Style="{DynamicResource PriorityStartStyle}" x:Name="priority" Fill="{Binding Priority, Converter={StaticResource PriorityColorConverter}}"  Height="20" Width="20" Stretch="Uniform" VerticalAlignment="Center"/>
+                                    </materialDesign:PopupBox.ToggleContent>
+                                    <Border  CornerRadius="10" Background="White">
+                                        <StackPanel Width="150">
+                                            <TextBlock Width="130" FontSize="10" TextWrapping="Wrap" Margin="0 0 0 5">
+                                                <Run Text="Set priority:"/>
+                                                <LineBreak/>
+                                                <Run Text="high, medium, low or none." FontWeight="Medium"/>
+                                            </TextBlock>
+                                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                                <Button Tag="{Binding Priority}" Click="SetHighPriority_Click">
+                                                    <Button.Template>
+                                                        <ControlTemplate>
+                                                            <Path Data="{DynamicResource star}" Style="{StaticResource PriorityStartStyle}" Margin="3" Width="20" Height="20" Stretch="Uniform" Fill="#de4c4a"/>
+                                                        </ControlTemplate>
+                                                    </Button.Template>
+                                                </Button>
+                                                <Button Tag="{Binding Priority}" Click="SetMediumPriority_Click">
+                                                    <Button.Template>
+                                                        <ControlTemplate>
+                                                            <Path Data="{DynamicResource star}" Style="{StaticResource PriorityStartStyle}" Margin="3" Width="20" Height="20" Stretch="Uniform" Fill="#f49c18"/>
+                                                        </ControlTemplate>
+                                                    </Button.Template>
+                                                </Button>
+                                                <Button Tag="{Binding Priority}" Click="SetLowPriority_Click">
+                                                    <Button.Template>
+                                                        <ControlTemplate>
+                                                            <Path Data="{DynamicResource star}" Style="{StaticResource PriorityStartStyle}" Margin="3" Width="20" Height="20" Stretch="Uniform" Fill="#4073d6"/>
+                                                        </ControlTemplate>
+                                                    </Button.Template>
+                                                </Button>
+                                                <Button Tag="{Binding Priority}" Click="SetNonePriority_Click">
+                                                    <Button.Template>
+                                                        <ControlTemplate>
+                                                            <Path Data="{DynamicResource star}" Style="{StaticResource PriorityStartStyle}" Margin="3" Width="20" Height="20" Stretch="Uniform" Fill="#687681"/>
+                                                        </ControlTemplate>
+                                                    </Button.Template>
+                                                </Button>
+                                            </StackPanel>
+                                        </StackPanel>
+                                    </Border>
+                                </materialDesign:PopupBox>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+                <Border BorderThickness="1" Width="400" Grid.Row="1" Height="90"  Margin="0 5 0 5" BorderBrush="#687681" CornerRadius="5">
+                    <Grid>
+                        <TextBox Style="{x:Null}" ContextMenu="{StaticResource TextBoxContextMenu}" AcceptsReturn="True" AcceptsTab="True" x:Name="taskDescription" Text="{Binding Description}" FontSize="13" FontFamily="Poppins" Height="70" TextWrapping="Wrap" Background="Transparent" BorderThickness="0"  Width="390" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="5,0,0,0"/>
+                        <TextBlock IsHitTestVisible="False" FontSize="13" Text="Add description for task ..." VerticalAlignment="Top" HorizontalAlignment="Left" Margin="10,3,0,0" Foreground="#666666">
+                            <TextBlock.Style>
+                                <Style TargetType="{x:Type TextBlock}">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Text, ElementName=taskDescription}" Value="">
+                                            <Setter Property="Visibility" Value="Visible"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                    </Grid>
+                </Border>
+                <Border BorderThickness="1" Width="400" Grid.Row="2" Height="50"  Margin="0 0 0 0" BorderBrush="#687681" CornerRadius="5">
+                    <StackPanel Orientation="Horizontal" Grid.Row="2">
+                        <StackPanel Orientation="Horizontal" >
+                            <TextBlock Text="Category" FontWeight="Medium" Margin="15 5 0 0" FontSize="13" VerticalAlignment="Center" Height="20"/>
+                            <ComboBox Width="120" Margin="5 0 0 0" Height="25" materialDesign:TextFieldAssist.UnderlineBrush="#0e213d" ItemsSource="{Binding Categories}" VerticalAlignment="Center" FontWeight="Medium" HorizontalAlignment="Center" FontSize="12" Name="setCategory" DisplayMemberPath="CategoryName" SelectedValuePath="CategoryName">
+                                <ComboBox.Resources>
+                                    <ResourceDictionary>
+                                        <ResourceDictionary.MergedDictionaries>
+                                            <materialDesign:BundledTheme BaseTheme="Light" PrimaryColor="DeepPurple" SecondaryColor="Lime"/>
+                                        </ResourceDictionary.MergedDictionaries>
+                                    </ResourceDictionary>
+                                </ComboBox.Resources>
+                            </ComboBox>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="20 0 0 0">
+                            <materialDesign:PopupBox ToolTip="Select due date" x:Name="popUpDate" Visibility="Visible" PlacementMode="TopAndAlignCentres" PopupMode="Click" Grid.Column="3" materialDesign:RippleAssist.Feedback="Transparent" Width="Auto" StaysOpen="True" VerticalAlignment="Center" Height="30">
+                                <materialDesign:PopupBox.ToggleContent>
+                                    <StackPanel Orientation="Horizontal" Margin="5 0 5 0">
+                                        <Path Data="{DynamicResource calendar}" Fill="#687681" Height="15" Stretch="Uniform" VerticalAlignment="Center"/>
+                                        <TextBlock Margin="5 0 5 0" Name="dueDateBlock" Text="{Binding DueDate, Converter={StaticResource DueDateConverter}, ConverterParameter='No date'}" FontWeight="Medium" FontSize="13"  VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                                    </StackPanel>
+                                </materialDesign:PopupBox.ToggleContent>
+                                <Border CornerRadius="5" Background="#fff" materialDesign:ShadowAssist.Darken="True">
+                                    <StackPanel Width="150">
+                                        <Button Click="setToday_Click" Style="{StaticResource MaterialDesignFlatButton}" HorizontalContentAlignment="Left" materialDesign:ButtonAssist.CornerRadius="5 5 0 0" Height="40">
+                                            <StackPanel Orientation="Horizontal" >
+                                                <Path Data="{DynamicResource todayDeadline}" Margin="5 0 0 0" VerticalAlignment="Center" Fill="#687681" Height="15" Width="15" Stretch="Uniform"/>
+                                                <Label Content="Today" FontWeight="Medium" FontSize="13" Margin="15 0 0 0" VerticalAlignment="Center"/>
+                                            </StackPanel>
+                                        </Button>
+                                        <Button Click="setTomorrow_Click" Height="40" Style="{StaticResource MaterialDesignFlatButton}">
+                                            <StackPanel Orientation="Horizontal" Margin="-18 0 0 0">
+                                                <materialDesign:PackIcon Kind="Calendar" Margin="5 0 0 0" Width="18" Height="18" Foreground="#687681" VerticalAlignment="Center"/>
+                                                <Label Content="Tomorrow" FontWeight="Medium" FontSize="13" Margin="14 0 0 0" VerticalAlignment="Center"/>
+                                            </StackPanel>
+                                        </Button>
+                                        <Button Click="setNextWeek_Click" Height="40" Style="{StaticResource MaterialDesignFlatButton}">
+                                            <StackPanel Orientation="Horizontal" Margin="-13 0 0 0">
+                                                <Path Data="{DynamicResource planned}" Margin="5 0 0 0" VerticalAlignment="Center" Fill="#687681" Height="15" Width="15" Stretch="Uniform"/>
+                                                <Label Content="Next week" FontWeight="Medium" FontSize="13" Margin="15 0 0 0" VerticalAlignment="Center"/>
+                                            </StackPanel>
+                                        </Button>
+                                        <Button Height="40" Style="{StaticResource MaterialDesignFlatButton}" materialDesign:ButtonAssist.CornerRadius="0 0 5 5">
+                                            <ToggleButton x:Name="pickDueDate" Style="{StaticResource iToggleButtonStyle}" Content="Pick a date" Width="150" Height="30">
+                                                <ToggleButton.Template>
+                                                    <ControlTemplate TargetType="ToggleButton">
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <Path Data="{DynamicResource calendar}" Margin="5 0 0 0" VerticalAlignment="Center" Fill="#687681" Height="15" Width="15" Stretch="Uniform"/>
+                                                            <Label Content="{TemplateBinding Content}" FontSize="13" FontWeight="Medium" Margin="15 0 0 0" VerticalAlignment="Center"/>
+                                                        </StackPanel>
+                                                    </ControlTemplate>
+                                                </ToggleButton.Template>
+                                            </ToggleButton>
+                                        </Button>
+                                        <Popup  AllowsTransparency="True" IsOpen="{Binding ElementName=pickDueDate, Path=IsChecked}"   Placement="Center" StaysOpen="False">
+                                            <Grid>
+                                                <Grid.Resources>
+                                                    <Style x:Key="CustomCalendarDayButton" TargetType="CalendarDayButton"
+                                                        BasedOn="{StaticResource MaterialDesignCalendarDayButton}">
+                                                        <Setter Property="materialDesign:CalendarAssist.SelectionColor" Value="#2896ff" />
+                                                        <Setter Property="materialDesign:CalendarAssist.SelectionForegroundColor" Value="Black" />
+                                                    </Style>
+                                                    <Style x:Key="CustomCalendarButton" TargetType="CalendarButton"
+                                                    BasedOn="{StaticResource MaterialDesignCalendarButton}">
+                                                        <Setter Property="materialDesign:CalendarAssist.SelectionColor" Value="#2896ff" />
+                                                        <Setter Property="materialDesign:CalendarAssist.SelectionForegroundColor" Value="Black" />
+                                                    </Style>
+                                                </Grid.Resources>
+                                                <Calendar Name="dueDate" SelectedDatesChanged="dueDate_SelectedDatesChanged" Background = "#343C3F" Foreground="White" materialDesign:CalendarAssist.HeaderBackground="#0e213d"
+                                                    materialDesign:CalendarAssist.HeaderForeground="White" CalendarDayButtonStyle="{StaticResource CustomCalendarDayButton}" CalendarButtonStyle="{StaticResource CustomCalendarButton}" />
+                                            </Grid>
+                                        </Popup>
+                                    </StackPanel>
+                                </Border>
+                            </materialDesign:PopupBox>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+                <Grid Grid.Row="3" Margin="0,20,0,-12">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <Button Style="{StaticResource IconButtonStyle}" Width="30" Height="30" Grid.Column="0" Name="removeTask" Click="removeTask_Click" Tag="delete">
+                        <materialDesign:PackIcon VerticalAlignment="Center" Width="25" Height="25" Kind="TrashCanOutline" Foreground="{Binding RelativeSource={RelativeSource AncestorType={x:Type Button}}, Path=Foreground}"/>
+                    </Button>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Grid.Column="1">
+                        <TextBlock IsHitTestVisible="False" FontSize="15" Text="Created on: " FontFamily="Candara" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="#3d3d3d"/>
+                        <TextBlock IsHitTestVisible="False" FontWeight="Bold" FontSize="15" Text="{Binding CreatedOn, StringFormat='{}{0:ddd, dd MMMM h:mm tt}'}" FontFamily="Candara" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="#3d3d3d"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Grid.Column="2" HorizontalAlignment="Right" >
+                        <Button Content="Save" Foreground="White" Name="save" Background="#0e213d" Click="save_Click" Margin="0 0 5 0" Height="25" Width="50" FontSize="12" Padding="0" BorderBrush="#0e213d" materialDesign:HintAssist.Background="#152947" />
+                        <Button Content="Cancel" IsCancel="True" Background="Transparent" Margin="0 0 0 0"  Height="25" Width="50" FontSize="12" Padding="0" BorderBrush="#0e213d" Foreground="#0e213d" materialDesign:HintAssist.Background="#152947" materialDesign:HintAssist.Foreground="#fff" BorderThickness="1"/>
+                    </StackPanel>
+                </Grid>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>

@@ -1,0 +1,144 @@
+﻿<Page x:Class="Taskish.Pages.Completed"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:Taskish.Pages"
+      xmlns:converter="clr-namespace:Taskish.Converters"
+      xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase" xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes" xmlns:controls="clr-namespace:Taskish.Controls"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800" Name="completePage"
+      Title="Completed" Loaded="completePage_Loaded">
+    <Page.Resources>
+        <converter:DueDateConverter x:Key="DueDateConverter"/>
+        <converter:StringEmptyConverter x:Key="StringEmptyConverter"/>
+        <converter:PriorityColorConverter x:Key="PriorityColorConverter"/>
+        <converter:MultiBoolToVisibility x:Key="MultiBoolToVisibility"/>
+
+        <CollectionViewSource Source="{Binding CompletedTasks}" x:Key="TasksList">
+            <CollectionViewSource.SortDescriptions>
+                <scm:SortDescription PropertyName="CompletedAt" Direction="Descending"/>
+            </CollectionViewSource.SortDescriptions>
+        </CollectionViewSource>
+
+        <Style TargetType="{x:Type ListViewItem}">
+            <Setter Property="Height" Value="45"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Margin" Value="0 -2 0 0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ListViewItem}">
+                        <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="3" CornerRadius="7">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="30"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="60"/>
+                                </Grid.ColumnDefinitions>
+                                <CheckBox Margin="10 0 0 0" HorizontalAlignment="Left" Name="completed" Checked="changeStatus_Click" Background="{Binding Task.Priority, Converter={StaticResource PriorityColorConverter}}" IsChecked="{Binding Task.IsCompleted}" Style="{DynamicResource CheckBoxStyle}"/>
+                                <Grid Margin="5 0 0 0" Grid.Column="1" >
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="1*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="{Binding Task.Name}" Grid.Column="0" TextTrimming="CharacterEllipsis" Name="name" FontWeight="Medium" Foreground="Black" VerticalAlignment="Top" Margin="0 2 0 0" FontSize="15" FontFamily="Palatino Linotype">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding ElementName=completed, Path=IsChecked}" Value="True">
+                                                        <Setter Property="TextDecorations" Value="Strikethrough"/>
+                                                        <Setter Property="Foreground" Value="#3d3d3d"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+                                </Grid>
+                                <StackPanel Margin="5 0 0 0" Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Bottom">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition MinWidth="60"/>
+                                            <ColumnDefinition MinWidth="150"/>
+                                            <ColumnDefinition MinWidth="200"/>
+                                            <ColumnDefinition MinWidth="200"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" HorizontalAlignment="Left" Text="{Binding Task.Category.CategoryName, TargetNullValue='Inbox', FallbackValue='Inbox'}" Foreground="Black" FontSize="13" FontWeight="Medium" VerticalAlignment="Bottom"/>
+                                        <TextBlock Grid.Column="1" HorizontalAlignment="Left" Text="{Binding Task.DueDate, Converter={StaticResource DueDateConverter}, ConverterParameter='No date'}" Foreground="#8769af" Margin="10 0 0 0" FontWeight="Medium" FontSize="13" VerticalAlignment="Bottom"/>
+                                        <StackPanel Grid.Column="2" Orientation="Horizontal" Margin="10 0 0 0">
+                                            <TextBlock HorizontalAlignment="Left" Text="Completed at:" Foreground="#246fe0" FontSize="13" FontWeight="Medium" VerticalAlignment="Bottom"/>
+                                            <TextBlock HorizontalAlignment="Left" Text="{Binding CompletedAt, StringFormat='{}{0:ddd, dd MMMM}'}" Margin="5 0 0 0" Foreground="#246fe0" FontWeight="Medium" FontSize="13" VerticalAlignment="Bottom"/>
+                                        </StackPanel>
+                                        <StackPanel Grid.Column="3" Orientation="Horizontal" Margin="0 0 0 0">
+                                            <TextBlock HorizontalAlignment="Left" Text="Expire at:" Foreground="#b33126" FontSize="13" FontWeight="Medium" VerticalAlignment="Bottom"/>
+                                            <TextBlock  HorizontalAlignment="Left" Text="{Binding Expire, StringFormat='{}{0:ddd, dd MMMM}'}" Margin="5 0 0 0" Foreground="#b33126" FontWeight="Medium" FontSize="13" VerticalAlignment="Bottom"/>
+                                        </StackPanel>
+                                    </Grid>
+                                </StackPanel>
+                                <StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0 0 5 0">
+                                    <Path Data="{DynamicResource star}" Style="{DynamicResource PriorityStartStyle}" IsEnabled="False" x:Name="priority" Margin="0 0 0 0" Fill="{Binding Task.Priority, Converter={StaticResource PriorityColorConverter}}" HorizontalAlignment="Right"  Height="20" Width="20" Stretch="Uniform" Grid.Column="2" VerticalAlignment="Center"/>
+                                    <Button Style="{StaticResource IconButtonStyle}" Tag="delete" Click="MoveToTrash_Click" Name="deleteTask" Margin="5 0 5 0" >
+                                        <materialDesign:PackIcon VerticalAlignment="Center" Width="20" Height="20" Kind="TrashCanOutline" Foreground="{Binding RelativeSource={RelativeSource AncestorType={x:Type Button}}, Path=Foreground}"/>
+                                    </Button>
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#edeaf4"/>
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter Property="Background" Value="#eff3fb"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Page.Resources>
+    <Grid>
+        <Border CornerRadius="5" Background="#e0f1ff">
+            <Grid >
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Grid  Margin="20 20 0 0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <StackPanel Orientation="Horizontal">
+                        <Path Data="{DynamicResource completed}" Width="25" Height="25" VerticalAlignment="Center" HorizontalAlignment="Left" Fill="#246fe0" Stretch="Uniform"/>
+                        <TextBlock Text="Completed" FontFamily="Constantia" FontSize="22" Margin="10 0 0 0" Foreground="Black" VerticalAlignment="Center" FontWeight="SemiBold" />
+
+                        <Button Style="{StaticResource IconButtonStyle}" Tag="info" Width="25" Height="25" Name="info" Margin="10 0 0 0" Click="GetInfo_Click">
+                            <materialDesign:PackIcon VerticalAlignment="Center" HorizontalAlignment="Center"  Width="25" Height="25" Kind="Information" Foreground="{Binding RelativeSource={RelativeSource AncestorType={x:Type Button}}, Path=Foreground}"/>
+                        </Button>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0 0 20 0">
+                        <Button Style="{StaticResource IconButtonStyle}" IsEnabled="{Binding ElementName=tasksList, Path=HasItems}" Tag="delete" Width="25" Height="25" Name="deleteAllTask" Margin="0 0 15 0" Command="{Binding MoveToTrashTasks}" CommandParameter="{Binding ElementName=completePage}">
+                            <materialDesign:PackIcon VerticalAlignment="Center" HorizontalAlignment="Center"  Width="25" Height="25" Kind="TrashCanOutline" Foreground="{Binding RelativeSource={RelativeSource AncestorType={x:Type Button}}, Path=Foreground}"/>
+                        </Button>
+                    </StackPanel>
+                </Grid>
+                <ListView  Grid.Row="1" Name="tasksList" Width="Auto" Style="{x:Null}" ItemsSource="{Binding Source={StaticResource TasksList}}" Background="Transparent" BorderThickness="0" Margin="20 10 0 20" >
+                    <ListView.Template>
+                        <ControlTemplate>
+                            <ScrollViewer Style="{StaticResource MyScroll}" HorizontalScrollBarVisibility="Disabled">
+                                <ItemsPresenter/>
+                            </ScrollViewer>
+                        </ControlTemplate>
+                    </ListView.Template>
+                </ListView>
+                <controls:GetStarted Grid.Row="1" Text="There are no completed tasks!&#x0a;Complete a task to see it here." HorizontalAlignment="Center" VerticalAlignment="Center" Background="Transparent">
+                    <controls:GetStarted.Visibility>
+                        <MultiBinding Converter="{StaticResource MultiBoolToVisibility}">
+                            <Binding ElementName="tasksList" Path="HasItems"/>
+                            <Binding Path="IsLoading"/>
+                        </MultiBinding>
+                    </controls:GetStarted.Visibility>
+                </controls:GetStarted>
+                <TextBlock Text="Loading tasks..." Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverter}}" Grid.Row="1" Name="loadingText" LineHeight="20" TextAlignment="Center" LineStackingStrategy="BlockLineHeight" Foreground="Black" FontSize="22" FontFamily="Gabriola" FontWeight="Bold" Margin="0 15 0 0" HorizontalAlignment="Center" TextWrapping="Wrap"/>
+            </Grid>
+        </Border>
+    </Grid>
+</Page>
