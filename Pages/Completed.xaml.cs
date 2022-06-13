@@ -41,7 +41,7 @@ namespace Taskish.Pages
             messageWindow.ShowDialog();
             Window.GetWindow(this).Effect = null;
         }
-        private async void changeStatus_Click(object sender, RoutedEventArgs e)
+        private async void ChangeStatus_Click(object sender, RoutedEventArgs e)
         {
             CheckBox cb = sender as CheckBox;
             Models.Completed task = cb.DataContext as Models.Completed;
