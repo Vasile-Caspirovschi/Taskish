@@ -1,10 +1,7 @@
 ﻿using Microsoft.Win32;
-using Taskish.ViewModel;
 using Spire.Doc;
 using Spire.Doc.Documents;
-//using Word = Microsoft.Office.Interop.Word;
 using System;
-//using Microsoft.Office.Interop.Word;
 using System.Collections.ObjectModel;
 using System.Drawing;
 using System.IO;
@@ -12,6 +9,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Windows;
+using Taskish.ViewModel;
 
 namespace Taskish.Models
 {
@@ -30,7 +28,7 @@ namespace Taskish.Models
                     break;
                 case "Planned":
                     tasks = new ObservableCollection<Task>(Functionality.GetTasks(Functionality.GetTasksFromDB()).Where(task => task.DueDate == dateOnly));
-                    
+
                     break;
                 case "Important":
                     tasks = Functionality.GetImportantTasks(Functionality.GetTasks(Functionality.GetTasksFromDB()), Functionality.GetPassedTasks(Functionality.GetTasksFromDB()));

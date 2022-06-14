@@ -36,6 +36,7 @@ namespace Taskish.ViewModel
 
         public void LongRunningMethod(Category selectedCategory)
         {
+            Categories = Functionality.GetCategoriesFromDB();
             CategoryTasks = Functionality.GetTasksCategory(Functionality.GetTasks(Functionality.GetTasksFromDB()), selectedCategory);
         }
         public ICommand ExportTasksToWord { get; }
@@ -60,6 +61,12 @@ namespace Taskish.ViewModel
         {
             get { return _taskDueDate; }
             set { _taskDueDate = value; NotifyPropertyChanged(nameof(TaskDueDate)); }
+        }
+        private ObservableCollection<Category> _categories;
+        public ObservableCollection<Category> Categories
+        {
+            get { return _categories; }
+            set { _categories = value; NotifyPropertyChanged(nameof(Categories)); }
         }
 
         private Category? _taskCategory;

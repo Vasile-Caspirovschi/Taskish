@@ -41,6 +41,7 @@ namespace Taskish.Views
         bool IsHidden = false;
         private void moveToAnimation_Click(object sender, RoutedEventArgs e)
         {
+
             if (IsHidden)
             {
                 IsHidden = false;
@@ -59,7 +60,7 @@ namespace Taskish.Views
                 someText.Text = "If you already have an account click below to log in!";
                 WelcomeAnimation(-350, 0);
             }
-
+            ClearDataFields();
         }
 
         private bool WelcomeAnimation(int to, int from)
@@ -193,6 +194,18 @@ namespace Taskish.Views
         private void Border_PreviewMouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             DragMove();
+        }
+
+        private void ClearDataFields()
+        {
+            username.Text = string.Empty;
+            password.Password = string.Empty;
+            repeatPassword.Password = string.Empty;
+            usernameRegister.Text = string.Empty;
+            question.SelectedItem = string.Empty;
+            passwordRegister.Password = string.Empty;
+            email.Text = string.Empty;
+            answer.Text = string.Empty;
         }
     }
 }

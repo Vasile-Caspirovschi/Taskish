@@ -56,7 +56,7 @@ namespace Taskish.ViewModel
 
             var hasNumber = new Regex(@"[0-9]+");
             var hasUpperChar = new Regex(@"[A-Z]+");
-            var hasMiniMaxChars = new Regex(@".{8,15}");
+            var hasMiniMaxChars = new Regex(@".{10,15}");
             var hasLowerChar = new Regex(@"[a-z]+");
             var hasSymbols = new Regex(@"[!@#$%^&*()_+=\[{\]};:<>|./?,-]");
 
@@ -72,7 +72,7 @@ namespace Taskish.ViewModel
             }
             else if (!hasMiniMaxChars.IsMatch(input))
             {
-                ErrorMessage = "Password should not be less than or greater than 12 characters!";
+                ErrorMessage = "Password should not be less than than 10 and greater than 15 characters!";
                 return false;
             }
             else if (!hasNumber.IsMatch(input))

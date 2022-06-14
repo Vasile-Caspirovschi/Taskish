@@ -23,6 +23,5 @@ namespace Taskish.Converters
         {
             throw new Exception("The method or operation is not implemented.");
         }
-
     }
 }

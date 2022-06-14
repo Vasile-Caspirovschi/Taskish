@@ -78,7 +78,7 @@
                     <StackPanel Grid.Row="1" Margin="20 0 25 0">
                         <StackPanel Orientation="Horizontal">
                             <materialDesign:PackIcon Kind="Account" Width="20" Height="20" VerticalAlignment="Center" Foreground="#3c3c3c"/>
-                            <TextBox Name="usernameRegister" ContextMenu="{StaticResource TextBoxContextMenu}" materialDesign:TextFieldAssist.UnderlineBrush="#0e213d" materialDesign:HintAssist.Hint="Username" Foreground="#222d3d" Style="{StaticResource MaterialDesignTextBox}" FontSize="14" Width="250" Margin="5 10"/>
+                            <TextBox Name="usernameRegister" MaxLength="30" ContextMenu="{StaticResource TextBoxContextMenu}" materialDesign:TextFieldAssist.UnderlineBrush="#0e213d" materialDesign:HintAssist.Hint="Username" Foreground="#222d3d" Style="{StaticResource MaterialDesignTextBox}" FontSize="14" Width="250" Margin="5 10"/>
                         </StackPanel>
                         <StackPanel Orientation="Horizontal">
                             <materialDesign:PackIcon Kind="Email" Width="20" Height="20" VerticalAlignment="Center" Foreground="#3c3c3c"/>
