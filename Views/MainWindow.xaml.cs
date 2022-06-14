@@ -239,8 +239,5 @@ namespace Taskish
 
         private void searchBox_GotFocus(object sender, RoutedEventArgs e) =>
             searchBox.ItemsSource = MainViewModel.TaskNames;
-
-        private void searchBox_LostFocus(object sender, RoutedEventArgs e) => searchBox.Text = string.Empty;
-
     }
 }

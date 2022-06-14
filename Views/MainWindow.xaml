@@ -10,11 +10,7 @@
         mc:Ignorable="d"
         Name="mainWindow"
         Title="Taskish" Icon="/Assets/Images/logo.png" MinWidth="700" Width="850" Height="500" MinHeight="500" WindowStyle="None" WindowStartupLocation="CenterScreen" AllowsTransparency="True" Background="{x:Null}" Loaded="mainWindow_Loaded" ResizeMode="CanResizeWithGrip">
-    <Window.Resources>
-        
-    </Window.Resources>
     <Grid Name="mainGrid">
-        
         <Border Name="borderMask" CornerRadius="7" Background="White"/>
         <Border Name="borderMain">
             <Border.OpacityMask>
@@ -86,9 +82,9 @@
                             </ToggleButton.Triggers>
                         </ToggleButton>
                     </StackPanel>
-                    <Border Grid.Row="1" Grid.Column="1" MaxWidth="400" MinWidth="200" HorizontalAlignment="Left" Height="25" VerticalAlignment="Center" CornerRadius="10 10 0 0" Background="#EFF2F8">
+                    <Border Grid.Row="1" Grid.Column="1" MinWidth="200" HorizontalAlignment="Stretch" Margin="0 0 10 0" Height="25" VerticalAlignment="Center" CornerRadius="10 10 0 0" Background="#EFF2F8">
                         <Grid>
-                            <controls:AutoCompleteBox FilterMode="Contains" GotFocus="searchBox_GotFocus" LostFocus="searchBox_LostFocus" MaxDropDownHeight="200" Height="25" ItemsSource="{Binding TaskNames}" PreviewKeyDown="searchBox_PreviewKeyDown" VerticalContentAlignment="Bottom" Background="Transparent" x:Name="searchBox" Placeholder="SEARCH A TASK" FontSize="12" FontWeight="SemiBold" Foreground="Black" BorderThickness="0">
+                            <controls:AutoCompleteBox FilterMode="Contains" GotFocus="searchBox_GotFocus" MaxDropDownHeight="200" Height="25" ItemsSource="{Binding TaskNames}" PreviewKeyDown="searchBox_PreviewKeyDown" VerticalContentAlignment="Bottom" Background="Transparent" x:Name="searchBox" Placeholder="SEARCH A TASK" FontSize="12" FontWeight="SemiBold" Foreground="Black" BorderThickness="0">
                             </controls:AutoCompleteBox>
                             <Button HorizontalAlignment="Right" VerticalAlignment="Top" Width="25" Height="25" Grid.Column="2" Margin="0 0 -8 0" Style="{StaticResource SearchButton}"/>
                         </Grid>
