@@ -14,7 +14,6 @@
     <None Remove="Assets\Images\logo.ico" />
     <None Remove="Assets\Images\logo.png" />
     <None Remove="Assets\Images\next-week.png" />
-    <None Remove="Assets\Images\profile1.jpg" />
     <None Remove="Assets\Images\tasks.png" />
     <None Remove="Assets\Images\tomorrow.png" />
   </ItemGroup>
@@ -40,7 +39,6 @@
 
   <ItemGroup>
     <Resource Include="Assets\Images\logo.png" />
-    <Resource Include="Assets\Images\profile1.jpg" />
   </ItemGroup>
 
   <ItemGroup>

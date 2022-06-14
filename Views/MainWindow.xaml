@@ -7,9 +7,13 @@
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
         xmlns:controls="clr-namespace:System.Windows.Controls;assembly=DotNetProjects.Input.Toolkit"
+        xmlns:converters="clr-namespace:Taskish.Converters"
         mc:Ignorable="d"
         Name="mainWindow"
         Title="Taskish" Icon="/Assets/Images/logo.png" MinWidth="700" Width="850" Height="500" MinHeight="500" WindowStyle="None" WindowStartupLocation="CenterScreen" AllowsTransparency="True" Background="{x:Null}" Loaded="mainWindow_Loaded" ResizeMode="CanResizeWithGrip">
+    <Window.Resources>
+        <converters:ImageConverter x:Key="ImageConverter"/>
+    </Window.Resources>
     <Grid Name="mainGrid">
         <Border Name="borderMask" CornerRadius="7" Background="White"/>
         <Border Name="borderMain">
@@ -79,14 +83,14 @@
                                         </Storyboard>
                                     </BeginStoryboard>
                                 </EventTrigger>
-                            </ToggleButton.Triggers>
+                            </ToggleButton.Triggers>    
                         </ToggleButton>
                     </StackPanel>
-                    <Border Grid.Row="1" Grid.Column="1" MinWidth="200" HorizontalAlignment="Stretch" Margin="0 0 10 0" Height="25" VerticalAlignment="Center" CornerRadius="10 10 0 0" Background="#EFF2F8">
+                    <Border Grid.Row="1" Grid.Column="1" MinWidth="200" HorizontalAlignment="Stretch" Margin="0 0 15 0" Height="25" VerticalAlignment="Center" CornerRadius="10 10 0 0" Background="#EFF2F8">
                         <Grid>
                             <controls:AutoCompleteBox FilterMode="Contains" GotFocus="searchBox_GotFocus" MaxDropDownHeight="200" Height="25" ItemsSource="{Binding TaskNames}" PreviewKeyDown="searchBox_PreviewKeyDown" VerticalContentAlignment="Bottom" Background="Transparent" x:Name="searchBox" Placeholder="SEARCH A TASK" FontSize="12" FontWeight="SemiBold" Foreground="Black" BorderThickness="0">
                             </controls:AutoCompleteBox>
-                            <Button HorizontalAlignment="Right" VerticalAlignment="Top" Width="25" Height="25" Grid.Column="2" Margin="0 0 -8 0" Style="{StaticResource SearchButton}"/>
+                            <Button HorizontalAlignment="Right" VerticalAlignment="Top" Width="25" Height="25" Grid.Column="2" Margin="0 0 -10 0" Style="{StaticResource SearchButton}"/>
                         </Grid>
                     </Border>
                     <!-- End: Button Close | Restore | Minimize -->
@@ -376,12 +380,7 @@
                                     <Grid>
                                         <Ellipse Height="40" Width="40" HorizontalAlignment="Left" VerticalAlignment="Bottom">
                                             <Ellipse.Fill>
-                                                <ImageBrush ImageSource="/Assets/Images/profile1.jpg" Stretch="UniformToFill"/>
-                                            </Ellipse.Fill>
-                                        </Ellipse>
-                                        <Ellipse Height="40" Width="40" HorizontalAlignment="Left" VerticalAlignment="Bottom">
-                                            <Ellipse.Fill>
-                                                <ImageBrush ImageSource="{Binding UserImage}" Stretch="UniformToFill"/>
+                                                <ImageBrush ImageSource="{Binding UserImage, Converter={StaticResource ImageConverter}, ConverterParameter='logo.png'}" Stretch="UniformToFill"/>
                                             </Ellipse.Fill>
                                         </Ellipse>
                                     </Grid>
