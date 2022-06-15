@@ -135,12 +135,7 @@ namespace Taskish
             contentContainer.Navigate(new Uri("Pages/Important.xaml", UriKind.RelativeOrAbsolute));
         }
 
-        private void categoryName_LostFocus(object sender, RoutedEventArgs e)
-        {
-            UpdateFrameContent();
-        }
-
-        void UpdateFrameContent()
+        private void UpdateFrameContent()
         {
             var currentPage = (Page)contentContainer.Content;
             if (currentPage != null)
