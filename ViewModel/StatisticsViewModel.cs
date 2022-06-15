@@ -93,7 +93,7 @@ namespace Taskish.ViewModel
 
         public StatisticsViewModel()
         {
-            CompletedTasks = Functionality.GetCompletedTasks(AllTasks);
+            CompletedTasks = Functionality.GetAllCompletedTasks(AllTasks);
             Tasks = Functionality.GetTasks(AllTasks);
 
             theBusiestDay = CompletedTasks.GroupBy(task => task.CompletedAt.Date).

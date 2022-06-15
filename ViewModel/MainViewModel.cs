@@ -1,12 +1,12 @@
 ﻿using Microsoft.Win32;
-using Taskish.Commands;
-using Taskish.Models;
-using Taskish.Pages;
 using System;
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
+using Taskish.Commands;
+using Taskish.Models;
+using Taskish.Pages;
 
 namespace Taskish.ViewModel
 {

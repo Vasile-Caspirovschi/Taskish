@@ -36,7 +36,7 @@
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="100"/>
                                 </Grid.ColumnDefinitions>
-                                <CheckBox Margin="10 0 0 0" HorizontalAlignment="Left" Background="{Binding Task.Priority, Converter={StaticResource PriorityColorConverter}}" IsChecked="{Binding Task.IsCompleted}" Style="{DynamicResource CheckBoxStyle}"/>
+                                <CheckBox Margin="10 0 0 0" HorizontalAlignment="Left" Name="completed" Background="{Binding Task.Priority, Converter={StaticResource PriorityColorConverter}}" IsChecked="{Binding Task.IsCompleted}" Style="{DynamicResource CheckBoxStyle}"/>
                                 <Grid Margin="5 0 0 0" Grid.Column="1" >
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="1*"/>

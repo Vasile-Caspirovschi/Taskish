@@ -1,17 +1,13 @@
-﻿using Taskish.Models;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.ObjectModel;
 using System.Threading.Tasks;
+using Taskish.Models;
 
 namespace Taskish.ViewModel
 {
     public class TrashViewModel : OnPropertyChanged
     {
-        private ObservableCollection<Models.Deleted> _removedTasks;
-        public ObservableCollection<Models.Deleted> RemovedTasks
+        private ObservableCollection<Deleted> _removedTasks;
+        public ObservableCollection<Deleted> RemovedTasks
         {
             get { return _removedTasks; }
             set { _removedTasks = value; NotifyPropertyChanged(nameof(RemovedTasks)); }
@@ -24,8 +20,8 @@ namespace Taskish.ViewModel
             System.Threading.Tasks.Task.Run(() => LongRunningMethod())
                 .ContinueWith(task =>
                 {
-                //and set the IsLoading property back to false back on the UI thread once the task has finished
-                IsLoading = false;
+                    //and set the IsLoading property back to false back on the UI thread once the task has finished
+                    IsLoading = false;
                 }, System.Threading.CancellationToken.None, TaskContinuationOptions.None, TaskScheduler.FromCurrentSynchronizationContext());
         }
 

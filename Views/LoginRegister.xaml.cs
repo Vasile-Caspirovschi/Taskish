@@ -1,13 +1,9 @@
-﻿using Taskish.Models;
-using Taskish.ViewModel;
-using System;
-using System.Drawing;
-using System.Linq;
-using System.Text.RegularExpressions;
+﻿using System;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Effects;
+using Taskish.ViewModel;
 
 namespace Taskish.Views
 {
@@ -95,13 +91,13 @@ namespace Taskish.Views
                 };
                 Effect = new BlurEffect();
                 loading.Show();
-                
+
                 try
                 {
                     var user = await Functionality.GetUserAsync(username.Text);
                     if (user != null)
                     {
-                        
+
                         if (user.Password == Functionality.EncryptPassword(password.Password.Trim()))
                         {
                             userName = user.UserName;
@@ -113,7 +109,7 @@ namespace Taskish.Views
                         else
                         {
                             loading.Close();
-                            var pass = Functionality.Decrypt(user.Password); 
+                            var pass = Functionality.Decrypt(user.Password);
                             Functionality.OpenMessageWindow("Password is incorrect!", "#c23c2f", this);
                         }
                     }

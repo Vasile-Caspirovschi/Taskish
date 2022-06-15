@@ -1,8 +1,4 @@
-﻿using Taskish.Models;
-using Taskish.Pages;
-using Taskish.ViewModel;
-using Taskish.Views;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
@@ -10,6 +6,10 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Effects;
+using Taskish.Models;
+using Taskish.Pages;
+using Taskish.ViewModel;
+using Taskish.Views;
 
 namespace Taskish
 {
@@ -149,7 +149,8 @@ namespace Taskish
                     contentContainer.Content = new ShowCategoryTasks(categories.SelectedItem as Category);
                 switch (currentPage.Title)
                 {
-                    case "Inbox": currentPage.DataContext = new InboxViewModel();
+                    case "Inbox":
+                        currentPage.DataContext = new InboxViewModel();
                         break;
                     case "Today":
                         currentPage.DataContext = new TodayViewModel();
@@ -232,12 +233,20 @@ namespace Taskish
         {
             if (e.Key == Key.Enter)
             {
-                contentContainer.Content = new SearchResults(searchBox.Text);
-                searchBox.Text = "";
+                ViewSearchResults();
             }
         }
 
         private void searchBox_GotFocus(object sender, RoutedEventArgs e) =>
             searchBox.ItemsSource = MainViewModel.TaskNames;
+        private void seachTask_Click(object sender, RoutedEventArgs e)
+        {
+            ViewSearchResults();
+        }
+        private void ViewSearchResults()
+        {
+            contentContainer.Content = new SearchResults(searchBox.Text);
+            searchBox.Text = "";
+        }
     }
 }

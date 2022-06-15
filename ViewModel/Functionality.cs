@@ -383,6 +383,28 @@ namespace Taskish.ViewModel
             CheckIfTaskHasExpired(completedTasks);
             return completedTasks;
         }
+        public static ObservableCollection<Completed> GetAllCompletedTasks(ObservableCollection<Task> allTasks)
+        {
+            ObservableCollection<Completed> completedTasks;
+            using (ApplicationContext context = new ApplicationContext())
+            {
+                var getCompletedTasks = new List<Completed>(
+                    (from task in allTasks
+                     join completedTask in context.Completed on task.TaskID equals completedTask.TaskId
+                     where task.UserId == GetCurrentLoggedUserId() && task.IsCompleted == true
+                     select new Completed
+                     {
+                         CompletedTaskId = completedTask.CompletedTaskId,
+                         CompletedAt = completedTask.CompletedAt,
+                         Expire = completedTask.Expire,
+                         TaskId = task.TaskID,
+                         Task = task
+                     }));
+                completedTasks = new ObservableCollection<Completed>(getCompletedTasks);
+            }
+            CheckIfTaskHasExpired(completedTasks);
+            return completedTasks;
+        }
         public static ObservableCollection<Task> GetTasksForToday(ObservableCollection<Task> tasks)
         {
             ObservableCollection<Task> tasksToday;
@@ -619,9 +641,8 @@ namespace Taskish.ViewModel
                     context.Categories.Attach(restoreTask.Category);
                 context.Tasks.Update(restoreTask);
                 context.SaveChanges();
-                if (restoreTask.IsCompleted == true)
-                    CompleteTask(restoreTask);
-                else MainViewModel.TaskNames.Add(restoreTask.Name);
+                if (!restoreTask.IsCompleted)
+                    MainViewModel.TaskNames.Add(restoreTask.Name);
             }
             using (ApplicationContext newContext = new ApplicationContext())
             {
@@ -689,8 +710,8 @@ namespace Taskish.ViewModel
                 Completed completedTask = context.Completed.Find(task.CompletedTaskId);
                 if (completedTask != null)
                 {
-                    context.Completed.Remove(completedTask);
-                    context.SaveChanges();
+                    //context.Completed.Remove(completedTask);
+                    //context.SaveChanges();
                     Task taskToRemove = context.Tasks.Find(completedTask.TaskId);
                     RemoveTask(taskToRemove);
                 }

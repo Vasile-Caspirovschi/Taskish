@@ -90,7 +90,7 @@
                         <Grid>
                             <controls:AutoCompleteBox FilterMode="Contains" GotFocus="searchBox_GotFocus" MaxDropDownHeight="200" Height="25" ItemsSource="{Binding TaskNames}" PreviewKeyDown="searchBox_PreviewKeyDown" VerticalContentAlignment="Bottom" Background="Transparent" x:Name="searchBox" Placeholder="SEARCH A TASK" FontSize="12" FontWeight="SemiBold" Foreground="Black" BorderThickness="0">
                             </controls:AutoCompleteBox>
-                            <Button HorizontalAlignment="Right" VerticalAlignment="Top" Width="25" Height="25" Grid.Column="2" Margin="0 0 -10 0" Style="{StaticResource SearchButton}"/>
+                            <Button HorizontalAlignment="Right" Click="seachTask_Click" VerticalAlignment="Top" Width="25" Height="25" Grid.Column="2" Margin="0 0 -10 0" Style="{StaticResource SearchButton}"/>
                         </Grid>
                     </Border>
                     <!-- End: Button Close | Restore | Minimize -->
@@ -372,13 +372,13 @@
                         </Grid>
                         <materialDesign:PopupBox VerticalAlignment="Bottom"  PopupVerticalOffset="-7" HorizontalAlignment="Right" Visibility="Visible" PlacementMode="BottomAndAlignCentres" PopupMode="Click" StaysOpen="True">
                             <materialDesign:PopupBox.ToggleContent>
-                                <Grid >
+                                <Grid>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="Auto"/>
                                         <ColumnDefinition Width="*"/>
                                     </Grid.ColumnDefinitions>
                                     <Grid>
-                                        <Ellipse Height="40" Width="40" HorizontalAlignment="Left" VerticalAlignment="Bottom">
+                                        <Ellipse Height="40" Width="40" StrokeThickness="1" Stroke="White" HorizontalAlignment="Left" VerticalAlignment="Bottom">
                                             <Ellipse.Fill>
                                                 <ImageBrush ImageSource="{Binding UserImage, Converter={StaticResource ImageConverter}, ConverterParameter='logo.png'}" Stretch="UniformToFill"/>
                                             </Ellipse.Fill>

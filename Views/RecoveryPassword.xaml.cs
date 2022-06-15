@@ -1,7 +1,7 @@
-﻿using Taskish.Models;
-using Taskish.ViewModel;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Media.Effects;
+using Taskish.Models;
+using Taskish.ViewModel;
 
 namespace Taskish.Views
 {
@@ -150,7 +150,7 @@ namespace Taskish.Views
             await System.Threading.Tasks.Task.Run(() =>
             {
                 string token = Functionality.GenerateResetTokenAsync(user).Result;
-                string body = SendEmail.PopulateBody(user.UserName,token);
+                string body = SendEmail.PopulateBody(user.UserName, token);
                 SendEmail.SendMessageToEmail(Functionality.Decrypt(user.Email), "Reset password", body);
             });
         }

@@ -1,12 +1,12 @@
-﻿using Taskish.Commands;
-using Taskish.Models;
-using Taskish.Pages;
-using System;
+﻿using System;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using Taskish.Commands;
+using Taskish.Models;
+using Taskish.Pages;
 
 namespace Taskish.ViewModel
 {

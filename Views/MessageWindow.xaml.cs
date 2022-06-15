@@ -9,7 +9,7 @@ namespace Taskish.Views
     public partial class MessageWindow : Window
     {
         public static string Message { get; set; }
-        
+
         public static SolidColorBrush Color { get; set; }
         public MessageWindow()
         {

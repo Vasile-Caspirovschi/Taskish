@@ -1,18 +1,14 @@
-﻿using Taskish.Commands;
-using Taskish.Models;
-using Taskish.Views;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using Taskish.Commands;
+using Taskish.Models;
+using Taskish.Views;
 
 namespace Taskish.ViewModel
 {
-    public class CompletedViewModel: OnPropertyChanged
+    public class CompletedViewModel : OnPropertyChanged
     {
         private ObservableCollection<Models.Completed> _completedTasks;
         public ObservableCollection<Models.Completed> CompletedTasks
@@ -66,7 +62,7 @@ namespace Taskish.ViewModel
             if (confirm.DialogResult == true)
             {
                 Functionality.MoveToTrashAllCompleteTask();
-                page.DataContext = new MainViewModel();
+                page.DataContext = new CompletedViewModel();
             }
             Window.GetWindow(page).Effect = null;
         }
