@@ -340,7 +340,7 @@
                                                                 <Setter Property="materialDesign:CalendarAssist.SelectionForegroundColor" Value="Black" />
                                                             </Style>
                                                         </Grid.Resources>
-                                                        <Calendar Name="dueDate" Background = "#343C3F" Foreground="White" materialDesign:CalendarAssist.HeaderBackground="#0e213d"
+                                                        <Calendar Name="dueDate" Background = "#343C3F" Foreground="White" DisplayDateStart="{x:Static sys:DateTime.Today}" materialDesign:CalendarAssist.HeaderBackground="#0e213d"
                                                     materialDesign:CalendarAssist.HeaderForeground="White" SelectedDate="{Binding TaskDueDate}" CalendarDayButtonStyle="{StaticResource CustomCalendarDayButton}" CalendarButtonStyle="{StaticResource CustomCalendarButton}" />
                                                     </Grid>
                                                 </Popup>

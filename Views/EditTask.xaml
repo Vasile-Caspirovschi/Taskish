@@ -165,7 +165,7 @@
                                                         <Setter Property="materialDesign:CalendarAssist.SelectionForegroundColor" Value="Black" />
                                                     </Style>
                                                 </Grid.Resources>
-                                                <Calendar Name="dueDate" SelectedDatesChanged="dueDate_SelectedDatesChanged" Background = "#343C3F" Foreground="White" materialDesign:CalendarAssist.HeaderBackground="#0e213d"
+                                                <Calendar Name="dueDate" SelectedDatesChanged="dueDate_SelectedDatesChanged" DisplayDateStart="{x:Static sys:DateTime.Today}" Background="#343C3F" Foreground="White" materialDesign:CalendarAssist.HeaderBackground="#0e213d"
                                                     materialDesign:CalendarAssist.HeaderForeground="White" CalendarDayButtonStyle="{StaticResource CustomCalendarDayButton}" CalendarButtonStyle="{StaticResource CustomCalendarButton}" />
                                             </Grid>
                                         </Popup>
