@@ -72,14 +72,16 @@ namespace Taskish.Pages
             confirm.ShowDialog();
 
             if (confirm.DialogResult == true)
-              Functionality.MoveToTrashCompleteTask(task);
-            await System.Threading.Tasks.Task.Run(() =>
             {
-                this.Dispatcher.Invoke(() =>
+                Functionality.MoveToTrashCompleteTask(task);
+                await System.Threading.Tasks.Task.Run(() =>
                 {
-                    this.DataContext = new CompletedViewModel();
+                    this.Dispatcher.Invoke(() =>
+                    {
+                        this.DataContext = new CompletedViewModel();
+                    });
                 });
-            });
+            }
             Window.GetWindow(this).Effect = null;
         }
     }
