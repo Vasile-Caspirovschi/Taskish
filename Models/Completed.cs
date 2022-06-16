@@ -11,6 +11,7 @@ namespace Taskish.Models
     public class Completed
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int CompletedTaskId { get; set; }
         public DateTime CompletedAt { get; set; }
         public DateTime Expire { get; set; }

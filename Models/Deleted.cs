@@ -11,6 +11,7 @@ namespace Taskish.Models
     public class Deleted
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int DeletedTaskId { get; set; }
         public DateTime DeletedAt { get; set; }
         public DateTime Expire { get; set; }

@@ -49,8 +49,8 @@ namespace Taskish.Models
             var credential = await GoogleWebAuthorizationBroker.AuthorizeAsync(
             new ClientSecrets
             {
-                ClientId = "339345448027-d1ib45qo3189hea57gujl8odedpbs6ke.apps.googleusercontent.com",
-                ClientSecret = "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"
+                ClientId = "339345448027-qiast8ag2rip6tvlbs684rpribmaea5t.apps.googleusercontent.com",
+                ClientSecret = "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"
             }, Scopes, "user", CancellationToken.None);
             return credential;
         }
