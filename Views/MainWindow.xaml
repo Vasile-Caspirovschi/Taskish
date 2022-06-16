@@ -516,7 +516,7 @@
                                 <Border Width="125" Grid.Row="1" Height="30" Name="addCategory" >
                                     <StackPanel Orientation="Horizontal">
                                         <Path Data="{DynamicResource plus}"  Height="10" Width="10" Margin="5 0 0 0" VerticalAlignment="Center" Stretch="Uniform" Fill="#222d3d"/>
-                                        <TextBox ToolTip="Add category" ContextMenu="{StaticResource TextBoxContextMenu}" Margin="3 0 0 0" materialDesign:TextFieldAssist.UnderlineBrush="#0e213d" Text="{Binding CategoryName, UpdateSourceTrigger=PropertyChanged}" Width="105" materialDesign:HintAssist.Hint="Add category" VerticalAlignment="Center" VerticalContentAlignment="Bottom" FontSize="12" Foreground="#222d3d" Name="categoryName">
+                                        <TextBox ToolTip="Add category" LostFocus="categoryName_LostFocus" ContextMenu="{StaticResource TextBoxContextMenu}" Margin="3 0 0 0" materialDesign:TextFieldAssist.UnderlineBrush="#0e213d" Text="{Binding CategoryName, UpdateSourceTrigger=PropertyChanged}" Width="105" materialDesign:HintAssist.Hint="Add category" VerticalAlignment="Center" VerticalContentAlignment="Bottom" FontSize="12" Foreground="#222d3d" Name="categoryName">
                                             <TextBox.Resources>
                                                 <ResourceDictionary>
                                                     <ResourceDictionary.MergedDictionaries>

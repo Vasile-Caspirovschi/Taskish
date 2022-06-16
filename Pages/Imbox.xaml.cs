@@ -147,5 +147,10 @@ namespace Taskish.Pages
                 Window.GetWindow(this).Effect = null;
             }
         }
+
+        private void clearDueDate_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }

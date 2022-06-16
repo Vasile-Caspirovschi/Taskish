@@ -97,7 +97,6 @@ namespace Taskish.Views
                     var user = await Functionality.GetUserAsync(username.Text);
                     if (user != null)
                     {
-
                         if (user.Password == Functionality.EncryptPassword(password.Password.Trim()))
                         {
                             userName = user.UserName;
@@ -109,7 +108,6 @@ namespace Taskish.Views
                         else
                         {
                             loading.Close();
-                            var pass = Functionality.Decrypt(user.Password);
                             Functionality.OpenMessageWindow("Password is incorrect!", "#c23c2f", this);
                         }
                     }

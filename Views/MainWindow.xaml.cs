@@ -227,9 +227,7 @@ namespace Taskish
         private void searchBox_PreviewKeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
-            {
                 ViewSearchResults();
-            }
         }
 
         private void searchBox_GotFocus(object sender, RoutedEventArgs e) =>
@@ -242,6 +240,11 @@ namespace Taskish
         {
             contentContainer.Content = new SearchResults(searchBox.Text);
             searchBox.Text = "";
+        }
+
+        private void categoryName_LostFocus(object sender, RoutedEventArgs e)
+        {
+            UpdateFrameContent();
         }
     }
 }

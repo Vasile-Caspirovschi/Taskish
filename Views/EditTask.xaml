@@ -111,45 +111,54 @@
                                 </ComboBox.Resources>
                             </ComboBox>
                         </StackPanel>
-                        <StackPanel Orientation="Horizontal" Margin="20 0 0 0">
+                        <Button Style="{StaticResource IconButtonStyle}" Click="removeCategory_Click" Width="30" Height="30" Margin="5 0 0 0" Grid.Column="0" Name="removeCategory" Tag="delete">
+                            <materialDesign:PackIcon VerticalAlignment="Bottom" Width="20" Height="20" Kind="Remove" Foreground="{Binding RelativeSource={RelativeSource AncestorType={x:Type Button}}, Path=Foreground}"/>
+                        </Button>
+                        <StackPanel Orientation="Horizontal" Margin="10 1 0 0">
                             <materialDesign:PopupBox ToolTip="Select due date" x:Name="popUpDate" Visibility="Visible" PlacementMode="TopAndAlignCentres" PopupMode="Click" Grid.Column="3" materialDesign:RippleAssist.Feedback="Transparent" Width="Auto" StaysOpen="True" VerticalAlignment="Center" Height="30">
                                 <materialDesign:PopupBox.ToggleContent>
-                                    <StackPanel Orientation="Horizontal" Margin="5 0 5 0">
-                                        <Path Data="{DynamicResource calendar}" Fill="#687681" Height="15" Stretch="Uniform" VerticalAlignment="Center"/>
+                                    <StackPanel Orientation="Horizontal" Margin="5 5 5 0">
+                                        <Path Data="{DynamicResource calendar}" Fill="#687681" Height="20" Stretch="Uniform" VerticalAlignment="Center"/>
                                         <TextBlock Margin="5 0 5 0" Name="dueDateBlock" Text="{Binding DueDate, Converter={StaticResource DueDateConverter}, ConverterParameter='No date'}" FontWeight="Medium" FontSize="13"  VerticalAlignment="Center" HorizontalAlignment="Left"/>
                                     </StackPanel>
                                 </materialDesign:PopupBox.ToggleContent>
                                 <Border CornerRadius="5" Background="#fff" materialDesign:ShadowAssist.Darken="True">
-                                    <StackPanel Width="150">
+                                    <StackPanel Width="170">
                                         <Button Click="setToday_Click" Style="{StaticResource MaterialDesignFlatButton}" HorizontalContentAlignment="Left" materialDesign:ButtonAssist.CornerRadius="5 5 0 0" Height="40">
                                             <StackPanel Orientation="Horizontal" >
-                                                <Path Data="{DynamicResource todayDeadline}" Margin="5 0 0 0" VerticalAlignment="Center" Fill="#687681" Height="15" Width="15" Stretch="Uniform"/>
+                                                <Path Data="{DynamicResource todayDeadline}" Margin="-5 0 0 0" VerticalAlignment="Center" Fill="#687681" Height="15" Width="15" Stretch="Uniform"/>
                                                 <Label Content="Today" FontWeight="Medium" FontSize="13" Margin="15 0 0 0" VerticalAlignment="Center"/>
                                             </StackPanel>
                                         </Button>
                                         <Button Click="setTomorrow_Click" Height="40" Style="{StaticResource MaterialDesignFlatButton}">
-                                            <StackPanel Orientation="Horizontal" Margin="-18 0 0 0">
-                                                <materialDesign:PackIcon Kind="Calendar" Margin="5 0 0 0" Width="18" Height="18" Foreground="#687681" VerticalAlignment="Center"/>
+                                            <StackPanel Orientation="Horizontal" Margin="-40 0 0 0">
+                                                <materialDesign:PackIcon Kind="Calendar" Margin="-10 0 0 0" Width="18" Height="18" Foreground="#687681" VerticalAlignment="Center"/>
                                                 <Label Content="Tomorrow" FontWeight="Medium" FontSize="13" Margin="14 0 0 0" VerticalAlignment="Center"/>
                                             </StackPanel>
                                         </Button>
                                         <Button Click="setNextWeek_Click" Height="40" Style="{StaticResource MaterialDesignFlatButton}">
-                                            <StackPanel Orientation="Horizontal" Margin="-13 0 0 0">
-                                                <Path Data="{DynamicResource planned}" Margin="5 0 0 0" VerticalAlignment="Center" Fill="#687681" Height="15" Width="15" Stretch="Uniform"/>
+                                            <StackPanel Orientation="Horizontal" Margin="-35 0 0 0">
+                                                <Path Data="{DynamicResource planned}" Margin="-10 0 0 0" VerticalAlignment="Center" Fill="#687681" Height="15" Width="15" Stretch="Uniform"/>
                                                 <Label Content="Next week" FontWeight="Medium" FontSize="13" Margin="15 0 0 0" VerticalAlignment="Center"/>
                                             </StackPanel>
                                         </Button>
-                                        <Button Height="40" Style="{StaticResource MaterialDesignFlatButton}" materialDesign:ButtonAssist.CornerRadius="0 0 5 5">
-                                            <ToggleButton x:Name="pickDueDate" Style="{StaticResource iToggleButtonStyle}" Content="Pick a date" Width="150" Height="30">
+                                        <Button Height="40" Style="{StaticResource MaterialDesignFlatButton}">
+                                            <ToggleButton x:Name="pickDueDate" Style="{StaticResource iToggleButtonStyle}" Margin="-3 0 0 0" Content="Pick a date" Width="170" Height="30">
                                                 <ToggleButton.Template>
                                                     <ControlTemplate TargetType="ToggleButton">
-                                                        <StackPanel Orientation="Horizontal">
-                                                            <Path Data="{DynamicResource calendar}" Margin="5 0 0 0" VerticalAlignment="Center" Fill="#687681" Height="15" Width="15" Stretch="Uniform"/>
+                                                        <StackPanel Orientation="Horizontal" Width="170">
+                                                            <Path Data="{DynamicResource calendar}" Margin="0 0 0 0" VerticalAlignment="Center" Fill="#687681" Height="14" Width="14" Stretch="Uniform"/>
                                                             <Label Content="{TemplateBinding Content}" FontSize="13" FontWeight="Medium" Margin="15 0 0 0" VerticalAlignment="Center"/>
                                                         </StackPanel>
                                                     </ControlTemplate>
                                                 </ToggleButton.Template>
                                             </ToggleButton>
+                                        </Button>
+                                        <Button Click="clearDueDate_Click" Height="40" materialDesign:ButtonAssist.CornerRadius="0 0 5 5" Style="{StaticResource MaterialDesignFlatButton}">
+                                            <StackPanel Orientation="Horizontal" Margin="-13 0 0 0">
+                                                <materialDesign:PackIcon Kind="Remove" Margin="5 0 0 0" Width="18" Height="18" Foreground="#e34032" VerticalAlignment="Center"/>
+                                                <Label Content="Remove due date" FontWeight="Medium" FontSize="13" Foreground="#e34032" Margin="15 0 0 0" VerticalAlignment="Center"/>
+                                            </StackPanel>
                                         </Button>
                                         <Popup  AllowsTransparency="True" IsOpen="{Binding ElementName=pickDueDate, Path=IsChecked}"   Placement="Center" StaysOpen="False">
                                             <Grid>

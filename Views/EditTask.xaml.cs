@@ -52,7 +52,11 @@ namespace Taskish.Views
         private void dueDate_SelectedDatesChanged(object sender, SelectionChangedEventArgs e)
         {
             DateTime selectedDate = (DateTime)((Calendar)sender).SelectedDate;
-            dueDateBlock.Text = $"Due {selectedDate.ToString("ddd, dd MMMM")}";
+            if (selectedDate.Date == DateTime.Today.Date)
+                dueDateBlock.Text = $"Due Today";
+            else if (selectedDate.Date == DateTime.Now.AddDays(1).Date)
+                dueDateBlock.Text = $"Due Tomorrow";
+            else dueDateBlock.Text = $"Due {selectedDate.ToString("ddd, dd MMMM")}";
             DueDate = DateOnly.FromDateTime(selectedDate);
         }
 
@@ -119,6 +123,17 @@ namespace Taskish.Views
                 Effect = null;
                 Close();
             }
+        }
+
+        private void clearDueDate_Click(object sender, RoutedEventArgs e)
+        {
+            dueDateBlock.Text = null;
+            DueDate = null;
+        }
+
+        private void removeCategory_Click(object sender, RoutedEventArgs e)
+        {
+            setCategory.SelectedItem = null;
         }
     }
 }

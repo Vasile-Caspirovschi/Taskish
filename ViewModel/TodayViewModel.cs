@@ -85,7 +85,26 @@ namespace Taskish.ViewModel
             get { return _taskCategory; }
             set { _taskCategory = value; NotifyPropertyChanged(nameof(TaskCategory)); }
         }
-
+        public RelayCommand ClearCategory
+        {
+            get
+            {
+                return new RelayCommand(obj =>
+                {
+                    TaskCategory = null;
+                });
+            }
+        }
+        public RelayCommand ClearDueDate
+        {
+            get
+            {
+                return new RelayCommand(obj =>
+                {
+                    TaskDueDate = null;
+                });
+            }
+        }
         public RelayCommand AddTask
         {
             get
