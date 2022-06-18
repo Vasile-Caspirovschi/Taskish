@@ -717,13 +717,10 @@ namespace Taskish.ViewModel
                 }
             }
         }
-        public static void MoveToTrashAllCompleteTask()
+        public static void MoveToTrashAllCompleteTask(ObservableCollection<Completed> completedTasks)
         {
-            using (ApplicationContext context = new ApplicationContext())
-            {
-                foreach (var task in context.Completed)
+                foreach (var task in completedTasks)
                     MoveToTrashCompleteTask(task);
-            }
         }
         public static void SetPriorityForTask(Task task, byte priority)
         {

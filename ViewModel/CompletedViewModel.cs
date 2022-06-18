@@ -61,7 +61,7 @@ namespace Taskish.ViewModel
             confirm.ShowDialog();
             if (confirm.DialogResult == true)
             {
-                Functionality.MoveToTrashAllCompleteTask();
+                Functionality.MoveToTrashAllCompleteTask(CompletedTasks);
                 page.DataContext = new CompletedViewModel();
             }
             Window.GetWindow(page).Effect = null;
